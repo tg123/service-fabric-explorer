@@ -4,8 +4,13 @@
     <div sfx-include src="'tab_' + appsCtrl.activeTabId" ng-if="appsCtrl.activeTabId" role="tabpanel"></div>
 
     <script type="text/ng-template" id="tab_applications">
-        <div class="detail-pane">
-            <sfx-detail-list list="apps" list-settings="listSettings"></sfx-detail-list>
+        <div class="detail-pane">            
+            <h4>Application Types</h4>
+            <sfx-detail-list list="appTypes" list-settings="applicationTypeListSettings"></sfx-detail-list>            
+        </div>
+        <div class="detail-pane">                        
+            <h4>Applications</h4>
+            <sfx-detail-list list="apps" list-settings="listSettings"></sfx-detail-list>            
         </div>
     </script>
 

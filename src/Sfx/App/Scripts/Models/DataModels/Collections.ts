@@ -136,7 +136,7 @@ module Sfx {
                 item => item[this.indexPropery],
                 newIdSelector,
                 null, // no need to create object because a full refresh will be scheduled when new object is returned by health chunk API,
-                      // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.
+                // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.
                 (item: T, newItem: P) => {
                     updatePromises.push(item.mergeHealthStateChunk(newItem));
                 });
@@ -259,6 +259,23 @@ module Sfx {
                     let appTypes = _.map(response.data, item => new ApplicationType(this.data, item));
                     let groups = _.groupBy(appTypes, item => item.raw.Name);
                     return _.map(groups, g => new ApplicationTypeGroup(this.data, g));
+                });
+        }
+    }
+
+    export class ApplicationTypeCollection extends DataModelCollectionBase<ApplicationType> {
+        public constructor(data: DataService) {
+            super(data);
+        }
+
+        public get viewPath(): string {
+            return this.data.routes.getAppTypesViewPath();
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getApplicationTypes(null, messageHandler)
+                .then(response => {
+                    return _.map(response.data, item => new ApplicationType(this.data, item));
                 });
         }
     }

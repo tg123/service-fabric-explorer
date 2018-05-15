@@ -7,8 +7,10 @@ module Sfx {
 
     export interface IAppsViewScope extends angular.IScope {
         apps: ApplicationCollection;
+        appTypes: ApplicationTypeCollection;
         actions: ActionCollection;
         listSettings: ListSettings;
+        applicationTypeListSettings: ListSettings;
         upgradeAppsListSettings: ListSettings;
         upgradeProgresses: ApplicationUpgradeProgress[];
     }
@@ -16,7 +18,7 @@ module Sfx {
     export class AppsViewController extends MainViewController {
         constructor($injector: angular.auto.IInjectorService, public $scope: IAppsViewScope) {
             super($injector, {
-                "applications": { name: "All Applications" },
+                "applications": { name: "Applications" },
                 "upgrades": { name: "Upgrades in Progress", superscriptClass: "tab-superscript-number" }
             });
 
@@ -37,9 +39,16 @@ module Sfx {
                 new ListColumnSettingForLink("name", "Name", item => item.viewPath),
                 new ListColumnSetting("raw.TypeName", "Application Type"),
                 new ListColumnSetting("raw.TypeVersion", "Version"),
-                new ListColumnSettingForBadge("healthState", "Health State"),
                 new ListColumnSettingWithFilter("raw.Status", "Status")
             ]);
+
+            this.$scope.applicationTypeListSettings = this.settings.getNewOrExistingListSettings("appTypes", ["name"], [
+                new ListColumnSetting("name", "Name"),
+                new ListColumnSetting("raw.Version", "Version"),
+                new ListColumnSetting("raw.Status", "Status"),
+                new ListColumnSetting("actions", "Actions", null, false, (item) => `<${Constants.DirectiveNameActionsRow} actions="item.actions" source="serviceTypesTable"></${Constants.DirectiveNameActionsRow}>`)
+            ]);
+
             this.$scope.upgradeAppsListSettings = this.settings.getNewOrExistingListSettings("upgrades", ["name"], [
                 new ListColumnSettingForLink("name", "Name", item => item.viewPath),
                 new ListColumnSettingForLink("parent.raw.TypeName", "Application Type", item => item.parent.appTypeViewPath),
@@ -53,15 +62,19 @@ module Sfx {
         }
 
         protected refreshCommon(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return this.data.getApps(true, messageHandler).then(apps => {
-                this.$scope.apps = apps;
+            return this.$q.all([
+                this.data.getApps(true, messageHandler).then(apps => {
+                    this.$scope.apps = apps;
 
-                if (this.$scope.apps.upgradingAppCount > 0) {
-                    this.tabs["upgrades"].superscriptInHtml = () => this.$scope.apps.upgradingAppCount.toString();
-                } else {
-                    this.tabs["upgrades"].superscriptInHtml = null;
-                }
-            });
+                    if (this.$scope.apps.upgradingAppCount > 0) {
+                        this.tabs["upgrades"].superscriptInHtml = () => this.$scope.apps.upgradingAppCount.toString();
+                    } else {
+                        this.tabs["upgrades"].superscriptInHtml = null;
+                    }
+                }),
+                this.data.getAppTypes(true).then(types => {
+                    this.$scope.appTypes = types;
+                })]);
         }
 
         private refreshUpgradesTab(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {

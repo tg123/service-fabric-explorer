@@ -75,7 +75,7 @@ module Sfx {
                 appsNode = {
                     nodeId: IdGenerator.appGroup(),
                     displayName: () => "Applications",
-                    childrenQuery: () => this.getApplicationTypes(),
+                    childrenQuery: () => this.getApplications(),
                     badge: () => apps.healthState,
                     selectAction: () => this.routes.navigate(() => apps.viewPath),
                     alwaysVisible: true
@@ -165,6 +165,24 @@ module Sfx {
                         badge: () => appTypeGroup.appsHealthState,
                         sortBy: () => [appTypeGroup.name],
                         actions: appTypeGroup.actions
+                    };
+                });
+            });
+        }
+
+        private getApplications(): angular.IPromise<ITreeNode[]> {
+            // App type groups cannot be inferred from health chunk data, because we need all app types
+            // even there are currently no application instances for them.
+            return this.data.getApps(true).then(applications => {
+                return _.map(applications.collection, application => {
+                    return {
+                        nodeId: IdGenerator.appType(application.name),
+                        displayName: () => application.name,
+                        selectAction: () => this.routes.navigate(() => application.viewPath),
+                        //childrenQuery: () => this.getApplicationsForType(application.name),
+                        badge: () => application.healthState,
+                        sortBy: () => [application.name],
+                        actions: application.actions
                     };
                 });
             });

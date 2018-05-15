@@ -11,6 +11,7 @@ module Sfx {
         public clusterUpgradeProgress: ClusterUpgradeProgress;
         public clusterLoadInformation: ClusterLoadInformation;
         public appTypeGroups: ApplicationTypeGroupCollection;
+        public appTypes: ApplicationTypeCollection;
         public apps: ApplicationCollection;
         public nodes: NodeCollection;
 
@@ -33,6 +34,7 @@ module Sfx {
             this.clusterUpgradeProgress = new ClusterUpgradeProgress(this);
             this.clusterLoadInformation = new ClusterLoadInformation(this);
             this.appTypeGroups = new ApplicationTypeGroupCollection(this);
+            this.appTypes = new ApplicationTypeCollection(this);
             this.apps = new ApplicationCollection(this);
             this.nodes = new NodeCollection(this);
 
@@ -127,6 +129,10 @@ module Sfx {
             return this.getAppTypeGroups(false, messageHandler).then(collection => {
                 return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
             });
+        }
+
+        public getAppTypes(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<ApplicationTypeCollection> {
+            return this.appTypes.ensureInitialized(forceRefresh, messageHandler);
         }
 
         public getAppType(name: string, version: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<ApplicationType> {
