@@ -19,6 +19,8 @@ module Sfx {
         public manifest: ApplicationManifest;
         public health: ApplicationHealth;
         public serviceTypes: ServiceTypeCollection;
+        public applicationTypeName: string;
+        public applicationTypeVersion: string;
 
         public constructor(data: DataService, raw?: IRawApplication) {
             super(data, raw);
@@ -32,6 +34,14 @@ module Sfx {
             if (this.data.actionsEnabled()) {
                 this.setUpActions();
             }
+        }
+
+        public get applicationTypeName(): string {
+            return this.raw.ApplicationDefinitionKind === "ServiceFabricApplicationDescription" ? this.raw.TypeName : "";
+        }
+
+        public get applicationTypeVersion(): string {
+            return this.raw.ApplicationDefinitionKind === "ServiceFabricApplicationDescription" ? this.raw.TypeVersion : "";
         }
 
         public get isUpgrading(): boolean {

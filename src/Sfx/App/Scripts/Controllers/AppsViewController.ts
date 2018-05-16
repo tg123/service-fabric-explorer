@@ -37,8 +37,8 @@ module Sfx {
 
             this.$scope.listSettings = this.settings.getNewOrExistingListSettings("apps", ["name"], [
                 new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-                new ListColumnSetting("raw.TypeName", "Application Type"),
-                new ListColumnSetting("raw.TypeVersion", "Version"),
+                new ListColumnSetting("applicationTypeName", "Application Type"),
+                new ListColumnSetting("applicationTypeVersion", "Version"),
                 new ListColumnSettingWithFilter("raw.Status", "Status")
             ]);
 

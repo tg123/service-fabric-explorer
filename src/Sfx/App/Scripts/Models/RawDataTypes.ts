@@ -52,6 +52,7 @@ module Sfx {
         Status: string;
         StatusDetails: string;
         DefaultParameterList: IRawParameter[];
+        ApplicationTypeDefinitionKind: string;
     }
 
     export interface IRawUpgradeDomain {
