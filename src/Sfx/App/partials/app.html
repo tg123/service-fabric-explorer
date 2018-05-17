@@ -6,32 +6,32 @@
     <!-- Essentials tab -->
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
-            <div class="table-responsive">
-                <table class="essen-table" role="presentation">
-                    <tr>
-                        <th>Name</th>
-                        <th>Application Type</th>
-                    </tr>
-                    <tr>
-                        <td title="{{app.name}}">{{app.name}}</td>
-                        <td><a href="{{app.appTypeViewPath}}" title="{{app.raw.TypeName}}">{{app.raw.TypeName}}</a></td>
-                    </tr>
-                    <tr>
-                        <th>Health State</th>
-                        <th>Version</th>
-                    </tr>
-
-                    <tr>
-                        <td><sfx-badge badge-class="app.healthState.badgeClass" text="app.healthState.text"></sfx-badge></td>
-                        <td>{{app.raw.TypeVersion}}</td>
-                    </tr>
-                    <tr>
-                        <th>Status</th>
-                    </tr>
-                    <tr>
-                        <td>{{app.raw.Status}}</td>
-                    </tr>
-                </table>
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                            <dl class="dl-essentials">
+                                <dt>Name</dt>
+                                <dd>{{app.name}}</dd>
+                                                    
+                                <dt>Health State</dt>
+                                <dd><sfx-badge badge-class="app.healthState.badgeClass" text="app.healthState.text"></sfx-badge></dd>
+            
+                                <dt>Status</dt>
+                                <dd>{{app.raw.Status}}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="dl-essentials" ng-if="app.applicationTypeName !== ''">                                        
+                                    <dt>Application Type</dt>
+                                    <dd><a href="{{app.appTypeViewPath}}" title="{{app.raw.TypeName}}">{{app.raw.TypeName}}</a></dd>
+                
+                                    <dt>Version</dt>
+                                    <dd>{{app.raw.TypeVersion}}</dd>
+                                    
+                                </dl>
+                        </div>                          
+                    </div>
+                </div>
             </div>
         </div>
 

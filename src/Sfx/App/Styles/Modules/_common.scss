@@ -337,3 +337,20 @@ input[type=number]::-webkit-outer-spin-button {
         }
     }
 }
+
+dl.dl-essentials {    
+    margin-bottom: 0;
+    
+    dt {
+        text-align: left;        
+        font-weight: normal;
+        font-size: 8pt;
+        width: 50%;
+        padding: 6px 30px 1px 0px;
+        color: #bbb;
+    }
+
+    dd {
+        padding: 0px 30px 1px 0px;
+    }
+}

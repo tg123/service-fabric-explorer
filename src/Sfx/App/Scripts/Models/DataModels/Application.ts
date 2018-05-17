@@ -9,7 +9,7 @@ module Sfx {
         public decorators: IDecorators = {
             decorators: {
                 "TypeName": {
-                    displayValueInHtml: (value) => HtmlUtils.getLinkHtml(value, this.appTypeViewPath)
+                    displayValueInHtml: (value) => value === null ? null : HtmlUtils.getLinkHtml(value, this.appTypeViewPath)
                 }
             }
         };
@@ -19,8 +19,6 @@ module Sfx {
         public manifest: ApplicationManifest;
         public health: ApplicationHealth;
         public serviceTypes: ServiceTypeCollection;
-        public applicationTypeName: string;
-        public applicationTypeVersion: string;
 
         public constructor(data: DataService, raw?: IRawApplication) {
             super(data, raw);
@@ -33,6 +31,11 @@ module Sfx {
 
             if (this.data.actionsEnabled()) {
                 this.setUpActions();
+            }
+
+            if (this.raw.ApplicationDefinitionKind !== "ServiceFabricApplicationDescription") {
+                this.raw.TypeName = null;
+                this.raw.TypeVersion = null;
             }
         }
 
@@ -86,7 +89,14 @@ module Sfx {
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawApplication> {
-            return Utils.getHttpResponseData(this.data.restClient.getApplication(this.id, messageHandler));
+            return Utils.getHttpResponseData(this.data.restClient.getApplication(this.id, messageHandler).then(response => {
+                if (response.data.ApplicationDefinitionKind !== "ServiceFabricApplicationDescription") {
+                    response.data.TypeName = null;
+                    response.data.TypeVersion = null;
+                }
+
+                return response;
+            }));
         }
 
         private setUpActions() {
