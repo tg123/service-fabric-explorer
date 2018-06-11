@@ -33,10 +33,10 @@ module Sfx {
                 this.setUpActions();
             }
 
-            if (this.raw.ApplicationDefinitionKind !== "ServiceFabricApplicationDescription") {
-                this.raw.TypeName = null;
-                this.raw.TypeVersion = null;
-            }
+            // if (this.raw.ApplicationDefinitionKind !== "ServiceFabricApplicationDescription") {
+            //     this.raw.TypeName = null;
+            //     this.raw.TypeVersion = null;
+            // }
         }
 
         public get applicationTypeName(): string {
@@ -90,10 +90,10 @@ module Sfx {
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawApplication> {
             return Utils.getHttpResponseData(this.data.restClient.getApplication(this.id, messageHandler).then(response => {
-                if (response.data.ApplicationDefinitionKind !== "ServiceFabricApplicationDescription") {
-                    response.data.TypeName = null;
-                    response.data.TypeVersion = null;
-                }
+                // if (response.data.ApplicationDefinitionKind !== "ServiceFabricApplicationDescription") {
+                //     response.data.TypeName = null;
+                //     response.data.TypeVersion = null;
+                // }
 
                 return response;
             }));

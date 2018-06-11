@@ -179,7 +179,7 @@ module Sfx {
                         nodeId: IdGenerator.appType(application.name),
                         displayName: () => application.name,
                         selectAction: () => this.routes.navigate(() => application.viewPath),
-                        //childrenQuery: () => this.getApplicationsForType(application.name),
+                        childrenQuery: () => this.getServices(application.id),
                         badge: () => application.healthState,
                         sortBy: () => [application.name],
                         actions: application.actions
