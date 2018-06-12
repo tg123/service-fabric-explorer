@@ -37,7 +37,6 @@ module Sfx {
             this.selectTreeNode([
                 IdGenerator.cluster(),
                 IdGenerator.appGroup(),
-                IdGenerator.appType(this.appTypeName),
                 IdGenerator.app(this.appId)
             ]);
 

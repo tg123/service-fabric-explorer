@@ -31,7 +31,7 @@ module Sfx {
             this.partitionId = IdUtils.getPartitionId(this.routeParams);
             this.appTypeName = IdUtils.getAppTypeName(this.routeParams);
 
-            if (this.appTypeName === Constants.SystemAppTypeName) {
+            if (this.appId === Constants.SystemAppId) {
                 this.selectTreeNode([
                     IdGenerator.cluster(),
                     IdGenerator.systemAppGroup(),
@@ -42,7 +42,6 @@ module Sfx {
                 this.selectTreeNode([
                     IdGenerator.cluster(),
                     IdGenerator.appGroup(),
-                    IdGenerator.appType(this.appTypeName),
                     IdGenerator.app(this.appId),
                     IdGenerator.service(this.serviceId),
                     IdGenerator.partition(this.partitionId)

@@ -26,8 +26,7 @@ module Sfx {
 
             this.selectTreeNode([
                 IdGenerator.cluster(),
-                IdGenerator.appGroup(),
-                IdGenerator.appType(this.appTypeName)
+                IdGenerator.appGroup()
             ]);
 
             this.$scope.appTypesListSettings = this.settings.getNewOrExistingListSettings(

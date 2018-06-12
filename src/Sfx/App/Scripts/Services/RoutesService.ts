@@ -102,20 +102,20 @@ module Sfx {
         }
 
         public getAppViewPath(appTypeName: string, appId: string): string {
-            return "#/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId);
+            return "#/app/" + this.doubleEncode(appId);
         }
 
         public getServiceViewPath(appTypeName: string, appId: string, serviceId: string): string {
-            return "#/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId);
+            return "#/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId);
         }
 
         public getPartitionViewPath(appTypeName: string, appId: string, serviceId: string, partitionId: string): string {
-            return "#/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId) +
+            return "#/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId) +
                 "/partition/" + this.doubleEncode(partitionId);
         }
 
         public getReplicaViewPath(appTypeName: string, appId: string, serviceId: string, partitionId: string, replicaId: string): string {
-            return "#/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId) +
+            return "#/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId) +
                 "/partition/" + this.doubleEncode(partitionId) + "/replica/" + this.doubleEncode(replicaId);
         }
 
@@ -240,22 +240,22 @@ module Sfx {
                 controller: "AppTypeViewController",
                 controllerAs: "appTypeCtrl"
             });
-            whenWithTabs($routeProvider, "/apptype/:appTypeName/app/:appId", {
+            whenWithTabs($routeProvider, "/app/:appId", {
                 templateUrl: "partials/app.html",
                 controller: "AppViewController",
                 controllerAs: "appCtrl"
             });
-            whenWithTabs($routeProvider, "/apptype/:appTypeName/app/:appId/service/:serviceId", {
+            whenWithTabs($routeProvider, "/app/:appId/service/:serviceId", {
                 templateUrl: "partials/service.html",
                 controller: "ServiceViewController",
                 controllerAs: "serviceCtrl"
             });
-            whenWithTabs($routeProvider, "/apptype/:appTypeName/app/:appId/service/:serviceId/partition/:partitionId", {
+            whenWithTabs($routeProvider, "/app/:appId/service/:serviceId/partition/:partitionId", {
                 templateUrl: "partials/partition.html",
                 controller: "PartitionViewController",
                 controllerAs: "partitionCtrl"
             });
-            whenWithTabs($routeProvider, "/apptype/:appTypeName/app/:appId/service/:serviceId/partition/:partitionId/replica/:replicaId", {
+            whenWithTabs($routeProvider, "/app/:appId/service/:serviceId/partition/:partitionId/replica/:replicaId", {
                 templateUrl: "partials/replica.html",
                 controller: "ReplicaViewController",
                 controllerAs: "replicaCtrl"

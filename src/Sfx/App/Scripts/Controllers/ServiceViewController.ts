@@ -32,7 +32,7 @@ module Sfx {
             this.appId = IdUtils.getAppId(routeParams);
             this.serviceId = IdUtils.getServiceId(routeParams);
 
-            if (this.appTypeName === Constants.SystemAppTypeName) {
+            if (this.appId === Constants.SystemAppId) {
                 // remove manifest tab for system app service
                 delete (this.tabs["manifest"]);
 
@@ -45,7 +45,6 @@ module Sfx {
                 this.selectTreeNode([
                     IdGenerator.cluster(),
                     IdGenerator.appGroup(),
-                    IdGenerator.appType(this.appTypeName),
                     IdGenerator.app(this.appId),
                     IdGenerator.service(this.serviceId)
                 ]);

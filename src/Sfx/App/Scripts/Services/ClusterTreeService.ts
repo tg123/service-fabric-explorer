@@ -176,7 +176,7 @@ module Sfx {
             return this.data.getApps(true).then(applications => {
                 return _.map(applications.collection, application => {
                     return {
-                        nodeId: IdGenerator.appType(application.name),
+                        nodeId: IdGenerator.appType(application.id),
                         displayName: () => application.name,
                         selectAction: () => this.routes.navigate(() => application.viewPath),
                         childrenQuery: () => this.getServices(application.id),
