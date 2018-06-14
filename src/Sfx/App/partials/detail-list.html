@@ -42,7 +42,7 @@
                 </td>
             </tr>
             <!-- Optional second row -->
-            <tr ng-repeat-end ng-if="listSettings.secondRowColumnSettings.length > 0 && listSettings.showSecondRow(item)">
+            <tr ng-repeat-end ng-if="listSettings.secondRowColumnSettings.length > 0">
                 <td class="no-border" ng-repeat="columnSetting in ::listSettings.secondRowColumnSettings track by columnSetting.propertyPath"
                     colspan="{{::columnSetting.colspan}}" ng-class="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed }">
                     <div uib-collapse="listSettings.secondRowCollapsible && item.isSecondRowCollapsed" sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)">

@@ -64,7 +64,8 @@ module Sfx {
             public secondRowColumnSettings: ListColumnSetting[] = [],
             public secondRowCollapsible: boolean = false,
             public showSecondRow: (item) => boolean = (item) => true,
-            public searchable: boolean = true) {
+            public searchable: boolean = true,
+            public secondRowCollapsedByDefault: boolean = false) {
 
             this.sortPropertyPaths = defaultSortPropertyPaths;
         }

@@ -33,6 +33,11 @@ module Sfx {
             return this.data.restClient.provisionApplication(newInstanceUri, this.raw.Name, this.raw.Version);
         }
 
+        public toggolePackageView(): angular.IPromise<any> {
+            $(`div[data-typename='${this.name}'][data-typeversion='${this.raw.Version}']`).toggleClass("hidden");
+            return this.data.$q.when(true);
+        }
+
         private setUpActions() {
             this.actions.add(new ActionWithConfirmationDialog(
                 this.data.$uibModal,
@@ -46,10 +51,18 @@ module Sfx {
                 `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${this.data.$location.host()}?`,
                 `${this.name}@${this.raw.Version}`
             ));
+
             this.actions.add(new ActionCreateAppInstance(
                 this.data.$uibModal,
                 this.data.$q,
                 this));
+
+            this.actions.add(new Action(
+                "viewpackages",
+                "View packages",
+                "View packages",
+                () => this.toggolePackageView(),
+                () => true));
         }
     }
 

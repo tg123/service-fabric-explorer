@@ -42,12 +42,19 @@ module Sfx {
                 new ListColumnSettingWithFilter("raw.Status", "Status")
             ]);
 
-            this.$scope.applicationTypeListSettings = this.settings.getNewOrExistingListSettings("appTypes", ["name"], [
-                new ListColumnSetting("name", "Name"),
-                new ListColumnSetting("raw.Version", "Version"),
-                new ListColumnSetting("raw.Status", "Status"),
-                new ListColumnSetting("actions", "Actions", null, false, (item) => `<${Constants.DirectiveNameActionsRow} actions="item.actions" source="serviceTypesTable"></${Constants.DirectiveNameActionsRow}>`)
-            ]);
+            this.$scope.applicationTypeListSettings = this.settings.getNewOrExistingListSettings(
+                "appTypes",
+                ["name"],
+                [
+                    new ListColumnSetting("name", "Name"),
+                    new ListColumnSetting("raw.Version", "Version"),
+                    new ListColumnSetting("raw.Status", "Status"),
+                    new ListColumnSetting("actions", "Actions", null, false, (item) => `<${Constants.DirectiveNameActionsRow} actions="item.actions" source="serviceTypesTable"></${Constants.DirectiveNameActionsRow}>`)
+                ],
+                [ new ListColumnSetting("packages", "Packages", null, false, (item) => `<sfx-app-type-package apptype="item"></sfx-app-type-package>`, 4) ],
+                true,
+                () => false);
+            this.$scope.applicationTypeListSettings.secondRowCollapsedByDefault = true;
 
             this.$scope.upgradeAppsListSettings = this.settings.getNewOrExistingListSettings("upgrades", ["name"], [
                 new ListColumnSettingForLink("name", "Name", item => item.viewPath),
@@ -73,6 +80,10 @@ module Sfx {
                     }
                 }),
                 this.data.getAppTypes(true).then(types => {
+                    _.map(types.collection, appType => appType.serviceTypes.refresh(messageHandler).then(() => {
+                        _.map(appType.serviceTypes.collection, serviceType => serviceType.manifest.refresh(messageHandler));
+                    }));
+
                     this.$scope.appTypes = types;
                 })]);
         }

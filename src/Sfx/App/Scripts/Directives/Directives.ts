@@ -171,6 +171,17 @@ module Sfx {
             };
         });
 
+        module.directive("sfxAppTypePackage", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                replace: true,
+                templateUrl: "partials/app-type-package.html",
+                scope: {
+                    apptype: "="
+                }
+            };
+        });
+
         module.directive("sfxBadge", (): angular.IDirective => {
             return {
                 restrict: "E",

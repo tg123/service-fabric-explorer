@@ -5,6 +5,10 @@ body {
     background-color: $right-panel-background-color;
 }
 
+.hidden {
+    display: none;
+}
+
 .table {
     @extend .table-condensed;
 

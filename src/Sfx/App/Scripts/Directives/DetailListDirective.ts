@@ -110,6 +110,10 @@ module Sfx {
                     this.$scope.listSettings.sortReverse);
             }
 
+            if (this.$scope.listSettings.secondRowCollapsedByDefault === true) {
+                list = _.map(list, (item: any) => { item.isSecondRowCollapsed = true; return item; });
+            }
+
             return list;
         }
 

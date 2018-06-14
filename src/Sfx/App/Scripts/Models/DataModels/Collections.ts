@@ -275,7 +275,8 @@ module Sfx {
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.data.restClient.getApplicationTypes(null, messageHandler)
                 .then(response => {
-                    return  _.map(_.filter(response.data, raw => raw.ApplicationTypeDefinitionKind === "ServiceFabricApplicationPackage"), item => new ApplicationType(this.data, item));
+                    //return  _.map(_.filter(response.data, raw => raw.ApplicationTypeDefinitionKind === "ServiceFabricApplicationPackage"), item => new ApplicationType(this.data, item));
+                    return  _.map(response.data, item => new ApplicationType(this.data, item));
                 });
         }
     }
