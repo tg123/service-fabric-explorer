@@ -10,10 +10,12 @@ import {
     IComponentInfo,
     HostVersionMismatchEventHandler,
     IComponentDescriptor,
-    IModuleLoadingInfo
+    IModuleLoadingConfig,
+    IModuleLoadingPolicy,
+    IModuleInfo
 } from "sfx.module-manager";
 
-import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
+import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
 import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
 import { IDiDescriptor } from "../utilities/di";
 
@@ -29,6 +31,7 @@ import { Communicator } from "../modules/ipc/communicator";
 import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
 import StringPattern from "../modules/remoting/pattern/string";
 import * as mmutils from "./utils";
+import * as appUtils from "../utilities/appUtils";
 
 enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
@@ -82,7 +85,7 @@ function createDedicationDiDescriptor(
     }
 
     return async (container, ...extraArgs) => {
-        const args = new Array<any>();
+        const args: Array<any> = [];
 
         if (injects !== undefined) {
             for (let injectIndex = 0; injectIndex < injects.length; injectIndex++) {
@@ -130,6 +133,16 @@ function createLazySingletonDiDescriptor(
     };
 }
 
+class DefaultModuleLoadingPolicy implements IModuleLoadingPolicy {
+    public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
+        if (!utils.isNullOrUndefined(nameOrInfo) && String.isString((<IModuleInfo>nameOrInfo).hostVersion)) {
+            return moduleManager.hostVersion === (<IModuleInfo>nameOrInfo).hostVersion;
+        }
+
+        return true;
+    }
+}
+
 export class ModuleManager implements IModuleManager {
     private readonly _hostVersion: string;
 
@@ -145,13 +158,15 @@ export class ModuleManager implements IModuleManager {
 
     private container: di.IDiContainer;
 
-    private moduleLoadingInfos: Array<IModuleLoadingInfo>;
+    private moduleLoadingInfos: Array<IModuleLoadingConfig>;
+
+    private moduleLoadingPolicy: IModuleLoadingPolicy;
 
     public get hostVersion(): string {
         return this._hostVersion;
     }
 
-    public get loadedModules(): Array<IModuleLoadingInfo> {
+    public get loadedModules(): Array<IModuleLoadingConfig> {
         return this.moduleLoadingInfos.slice();
     }
 
@@ -166,6 +181,7 @@ export class ModuleManager implements IModuleManager {
         this.pattern_moduleManager = new StringPattern("module-manager");
         this.pattern_proxy = new StringPattern("module-manager/object-proxy");
         this.moduleLoadingInfos = [];
+        this.moduleLoadingPolicy = new DefaultModuleLoadingPolicy();
         this.container = new di.DiContainer();
 
         if (parentCommunicator) {
@@ -196,11 +212,17 @@ export class ModuleManager implements IModuleManager {
         if (!hostCommunicator) {
             const constructorOptions = mmutils.generateModuleManagerConstructorOptions(this);
 
-            childProcess = child_process.fork("./bootstrap.js", [JSON.stringify(constructorOptions)]);
-            hostCommunicator = new Communicator(childProcess, hostName);
-            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, true);
+            childProcess =
+                appUtils.fork(
+                    appUtils.local("./bootstrap.js"),
+                    [appUtils.toCmdArg(
+                        mmutils.ConstructorOptionsArgName,
+                        JSON.stringify(constructorOptions))]);
+            hostCommunicator = new Communicator(childProcess, { id: hostName });
+
+            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, true, hostName);
         } else {
-            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, false);
+            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, false, hostName);
         }
 
         proxy.setResolver(this.onProxyResolvingAsync);
@@ -254,14 +276,7 @@ export class ModuleManager implements IModuleManager {
         }
 
         if (!utils.isNullOrUndefined(hostName) && !String.isEmptyOrWhitespace(hostName)) {
-            let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
-
-            if (childIndex < 0) {
-                await this.newHostAsync(hostName);
-                childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
-            }
-
-            const child = this.children[childIndex];
+            const child = await this.obtainChildAsync(hostName);
 
             await child.communicator.sendAsync<ILoadModuleDirAsyncMessage, void>(
                 this.pattern_moduleManager.getRaw(),
@@ -281,14 +296,32 @@ export class ModuleManager implements IModuleManager {
                     continue;
                 }
 
-                loadedModules.push(this.loadModule(modulePath, respectLoadingMode));
+                const loadedModule = this.loadModule(modulePath, respectLoadingMode);
+
+                if (!loadedModule) {
+                    continue;
+                }
+
+                loadedModules.push(loadedModule);
             }
 
             // Initialize modules.
             for (const module of loadedModules) {
-                this.initializeModule(module);
+                await this.initializeModuleAsync(module);
             }
         }
+    }
+
+    public setModuleLoadingPolicy(policy: IModuleLoadingPolicy): void {
+        if (utils.isNullOrUndefined(policy)) {
+            this.moduleLoadingPolicy = new DefaultModuleLoadingPolicy();
+        }
+
+        if (!Function.isFunction(policy.shouldLoad)) {
+            throw new Error("policy must implement shouldLoad() function.");
+        }
+
+        this.moduleLoadingPolicy = policy;
     }
 
     public async loadModuleAsync(path: string, hostName?: string, respectLoadingMode?: boolean): Promise<void> {
@@ -297,14 +330,7 @@ export class ModuleManager implements IModuleManager {
         }
 
         if (!utils.isNullOrUndefined(hostName) && !String.isEmptyOrWhitespace(hostName)) {
-            let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
-
-            if (childIndex < 0) {
-                await this.newHostAsync(hostName);
-                childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
-            }
-
-            const child = this.children[childIndex];
+            const child = await this.obtainChildAsync(hostName);
 
             await child.communicator.sendAsync<ILoadModuleAsyncMessage, void>(
                 this.pattern_moduleManager.getRaw(),
@@ -357,17 +383,36 @@ export class ModuleManager implements IModuleManager {
         }
     }
 
-    private loadModule(path: string, respectLoadingMode?: boolean): IModule {
-        const module: IModule = require(path);
+    private async obtainChildAsync(hostName: string): Promise<IHostRecord> {
+        let childIndex = this.children ? this.children.findIndex((child) => child.proxy.id === hostName) : -1;
+
+        if (childIndex < 0) {
+            await this.newHostAsync(hostName);
+            childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
+        }
+
+        return this.children[childIndex];
+    }
+
+    private loadModule(modulePath: string, respectLoadingMode?: boolean): IModule {
+        if (!this.moduleLoadingPolicy.shouldLoad(this, path.basename(modulePath))) {
+            return undefined;
+        }
+
+        const module: IModule = require(modulePath);
 
         if (!Function.isFunction(module.getModuleMetadata)) {
-            throw new Error(`Invalid module "${path}": missing getModuleMetadata().`);
+            throw new Error(`Invalid module "${modulePath}": missing getModuleMetadata().`);
         }
 
         const moduleInfo = module.getModuleMetadata();
 
+        if (!this.moduleLoadingPolicy.shouldLoad(this, moduleInfo)) {
+            return;
+        }
+
         this.moduleLoadingInfos.push({
-            location: path,
+            location: modulePath,
             name: moduleInfo.name,
             version: moduleInfo.version,
             hostVersion: moduleInfo.hostVersion,
@@ -400,9 +445,9 @@ export class ModuleManager implements IModuleManager {
         return module;
     }
 
-    private initializeModule(module: IModule): void {
-        if (Function.isFunction(module.initialize)) {
-            module.initialize(this);
+    private async initializeModuleAsync(module: IModule): Promise<void> {
+        if (Function.isFunction(module.initializeAsync)) {
+            await module.initializeAsync(this);
         }
     }
 
@@ -445,7 +490,7 @@ export class ModuleManager implements IModuleManager {
             return await this.getComponentFromProxiesAsync(proxy, name, ...extraArgs);
         }
 
-    private onModuleManagerMessageAsync: RequestHandler =
+    private onModuleManagerMessageAsync: AsyncRequestHandler =
         async (communicator: ICommunicator, path: string, content: IModuleManagerMessage): Promise<any> => {
             switch (content.action) {
                 case ModuleManagerAction.loadModuleDirAsync:

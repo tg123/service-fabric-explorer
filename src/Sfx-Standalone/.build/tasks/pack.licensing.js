@@ -146,7 +146,7 @@ function generateDep(depName, depsDir, packageJsonName) {
     const depDir = path.resolve(path.join(depsDir, depName));
 
     if (!fs.existsSync(depDir)) {
-        throw new Error(utils.format('Cannot find dependency "{}".'));
+        throw new Error(`Cannot find dependency "${depDir}".'`);
     }
 
     /** @type {IPackageJson} */
@@ -199,7 +199,7 @@ function generateLicensingDeps(depType, packageFormat, depsDir, deps) {
     }
 
     if (!fs.existsSync(depsDir)) {
-        throw new Error(String.format('depsDir "{}" does not exist.', depsDir));
+        throw new Error(utils.format('depsDir "{}" does not exist.', depsDir));
     }
 
     /** @type {Array.<string>} */
@@ -283,11 +283,19 @@ function generateThirdPartyNotice(deps, noticeFilePath) {
         fs.appendFileSync(noticeFd, "This project incorporates components from the projects listed below. The original copyright notices and the licenses under which Microsoft received such components are set forth below. Microsoft reserves all rights not expressly granted herein, whether by implication, estoppel or otherwise.\r\n");
         fs.appendFileSync(noticeFd, "\r\n");
 
-        deps.forEach((dep, depIndex) => {
-            fs.appendFileSync(noticeFd, utils.format("{}.\t{} ({})\r\n", depIndex + 1, dep.name, dep.homepage));
+        // Remove the duplications        
+        let dependencyMap = new Map();        
+        deps.forEach(dep => {
+            dependencyMap.set(dep.name, dep);            
         });
 
-        for (const dep of deps) {
+        let depIndex = 1;
+        dependencyMap.forEach(dep => {            
+            fs.appendFileSync(noticeFd, utils.format("{}.\t{} ({})\r\n", depIndex, dep.name, dep.homepage));
+            depIndex = depIndex + 1;
+        });
+
+        dependencyMap.forEach(dep => {            
             fs.appendFileSync(noticeFd, "\r\n");
             fs.appendFileSync(noticeFd, utils.format("{} NOTICES AND INFORMATION BEGIN HERE\r\n", dep.name));
             fs.appendFileSync(noticeFd, "=========================================\r\n");
@@ -295,7 +303,10 @@ function generateThirdPartyNotice(deps, noticeFilePath) {
             fs.appendFileSync(noticeFd, "\r\n");
             fs.appendFileSync(noticeFd, "=========================================\r\n");
             fs.appendFileSync(noticeFd, utils.format("END OF {} NOTICES AND INFORMATION\r\n", dep.name));
-        }
+        });
+    }
+    catch (e) {
+        log.error("Generating third party notices files failed.", e);
     } finally {
         fs.closeSync(noticeFd);
         log.info("Finished generation of the third party notices files:", buildInfos.licensing.thirdPartyNoticesFileName, ".");
@@ -317,7 +328,7 @@ gulp.task("pack:licensing",
 
         if (fs.existsSync("../Sfx/package.json")) {
             /** @type {IPackageJson} */
-            const sfxPackageJson = require("../../../Sfx/package.json");
+            const sfxPackageJson = config.loadJson("../Sfx/package.json");
 
             prodDeps = prodDeps.concat(generateLicensingDeps("prod", "npm", "../Sfx/node_modules", sfxPackageJson.dependencies));
             prodDeps = prodDeps.concat(generateLicensingDeps("prod", "npm", "../Sfx/node_modules", sfxPackageJson.optionalDependencies));
@@ -330,4 +341,6 @@ gulp.task("pack:licensing",
         msInternalDeps = msInternalDeps.concat(generateLicensingDeps("dev", "npm", "./node_modules", packagejson.devDependencies));
 
         generateThirdPartyNotice(prodDeps, path.join(buildInfos.paths.appDir, buildInfos.licensing.thirdPartyNoticesFileName));
+
+        return Promise.resolve();
     });

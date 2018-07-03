@@ -18,4 +18,5 @@ gulp.task("clean:build",
 gulp.task("clean:publish",
     () => del([buildInfos.paths.publishDir]));
 
-gulp.task("clean:all", ["clean:build", "clean:publish"]);
+gulp.task("clean:all",
+    gulp.parallel("clean:build", "clean:publish"));

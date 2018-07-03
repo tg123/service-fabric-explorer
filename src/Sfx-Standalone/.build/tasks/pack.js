@@ -7,14 +7,14 @@
 
 const common = require("../common");
 const config = require("../config");
+const utilities = require("../utilities");
 
-const path = require("path");
 const gulp = require("gulp");
-const runSequence = require("run-sequence");
 const packager = require("electron-packager");
 
 const Architecture = common.Architecture;
 const Platform = common.Platform;
+const utils = common.utils;
 const buildInfos = config.buildInfos;
 
 /**
@@ -88,7 +88,7 @@ function generatePackage(platform) {
         appCopyright: buildInfos.copyright,
         arch: toPackagerArchs(buildInfos.targets[platform].archs),
         asar: false,
-        icon: path.join(buildInfos.paths.appDir, "icons/icon"),
+        icon: "icons/icon",
         name: platform === Platform.MacOs ? buildInfos.productName : buildInfos.targetExecutableName,
         out: buildInfos.paths.buildDir,
         overwrite: true,
@@ -101,24 +101,39 @@ function generatePackage(platform) {
 }
 exports.generatePackage = generatePackage;
 
+function createPackagingTask(platform) {
+    const taskFn = generatePackage.bind(undefined, platform);
+
+    taskFn.displayName = `pack:packaging@${platform}`;
+    return taskFn;
+}
+
 require("./build");
 require("./pack.licensing");
 
 gulp.task("pack:update-version",
-    () => common.appdirExec(common.utils.format("npm version {} --allow-same-version", buildInfos.buildNumber)));
+    () =>
+        Promise.resolve(
+            utilities.appdirExec(
+                utils.format("npm version {} --allow-same-version", buildInfos.buildNumber))));
 
 gulp.task("pack:prepare",
-    (callback) => runSequence(
+    gulp.series(
         "clean-build:all",
-        ["pack:update-version", "pack:licensing"],
-        callback));
+        gulp.parallel("pack:update-version", "pack:licensing")));
 
-gulp.task("pack:windows", ["pack:prepare"],
-    () => generatePackage(Platform.Windows));
+gulp.task("pack:windows",
+    gulp.series(
+        "pack:prepare",
+        createPackagingTask(Platform.Windows)));
 
-gulp.task("pack:linux", ["pack:prepare"],
-    () => generatePackage(Platform.Linux));
+gulp.task("pack:linux",
+    gulp.series(
+        "pack:prepare",
+        createPackagingTask(Platform.Linux)));
 
-gulp.task("pack:macos", ["pack:prepare"],
-    () => generatePackage(Platform.MacOs));
+gulp.task("pack:macos",
+    gulp.series(
+        "pack:prepare",
+        createPackagingTask(Platform.MacOs)));
 

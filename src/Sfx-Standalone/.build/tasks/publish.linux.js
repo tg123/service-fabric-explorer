@@ -12,7 +12,6 @@ const versioning = require("../versioning");
 
 const path = require("path");
 const gulp = require("gulp");
-const runSequence = require("run-sequence");
 
 const Architecture = common.Architecture;
 const Platform = common.Platform;
@@ -95,39 +94,40 @@ function publishRpm(arch) {
     return rpmBuilder(getInstallerOptions(arch));
 }
 
-gulp.task("publish:versioninfo-linux",
-    () => versioning.generateVersionInfo(
-        Platform.Linux,
-        (baseUrl, arch) => `https://github.com/Microsoft/service-fabric-explorer/releases/tag/v${buildInfos.buildNumber}`));
+gulp.task("publish:versioninfo@linux",
+    () =>
+        Promise.resolve(
+            versioning.generateVersionInfo(
+                Platform.Linux,
+                (baseUrl, arch) => `https://github.com/Microsoft/service-fabric-explorer/releases/tag/v${buildInfos.buildNumber}`)));
 
-gulp.task("publish:linux-deb-x86", ["publish:prepare"],
+gulp.task("publish:deb@x86",
     () => publishDeb(Architecture.X86));
 
-gulp.task("publish:linux-deb-x64", ["publish:prepare"],
+gulp.task("publish:deb@x64",
     () => publishDeb(Architecture.X64));
 
-gulp.task("publish:linux-rpm-x86", ["publish:prepare"],
+gulp.task("publish:rpm@x86",
     () => publishRpm(Architecture.X86));
 
-gulp.task("publish:linux-rpm-x64", ["publish:prepare"],
+gulp.task("publish:rpm@x64",
     () => publishRpm(Architecture.X64));
 
-gulp.task("publish:linux-deb", ["publish:linux-deb-x86", "publish:linux-deb-x64"]);
+gulp.task("publish:deb",
+    gulp.series(
+        "publish:prepare",
+        gulp.parallel("publish:deb@x86", "publish:deb@x64")));
 
-gulp.task("publish:linux-rpm",
-    (callback) =>
-        runSequence(
-            "publish:linux-rpm-x86",
-            "publish:linux-rpm-x64",
-            callback));
+gulp.task("publish:rpm",
+    gulp.series(
+        "publish:prepare",
+        "publish:rpm@x86",
+        "publish:rpm@x64"));
 
 gulp.task("publish:linux",
-    (callback) => runSequence(
+    gulp.series(
         "pack:linux",
-        [
-            "publish:versioninfo-linux",
-
-            "publish:linux-deb",
-            "publish:linux-rpm",
-        ],
-        callback));
+        gulp.parallel(
+            "publish:versioninfo@linux",
+            "publish:deb",
+            "publish:rpm")));
