@@ -13,6 +13,8 @@ interface IObjectDataInfo extends IDataInfo {
     memberInfos: IDictionary<IDataInfo>;
 }
 
+const FuncName_DisposeAsync = "disposeAsync";
+
 export class DataInfoManager implements IDisposable {
     private refRoot: ReferenceNode;
 
@@ -43,11 +45,11 @@ export class DataInfoManager implements IDisposable {
         return referee.target;
     }
 
-    public async dispose(): Promise<void> {
+    public async disposeAsync(): Promise<void> {
         if (!this.disposed) {
-            const disposingRefRoot = this.refRoot;
-
-            const promises = disposingRefRoot.getRefereeIds().map((refId) => this.releaseByIdAsync(refId));
+            const promises =
+                this.refRoot.getRefereeIds().map(
+                    (refId) => refId === this.refRoot.id ? Promise.resolve() : this.releaseByIdAsync(refId));
             await Promise.all(promises);
 
             this.refRoot = undefined;
@@ -74,7 +76,7 @@ export class DataInfoManager implements IDisposable {
         return this.toDataInfo(target, parentId);
     }
 
-    public realizeDataInfo(dataInfo: IDataInfo, parentId?: string): any {
+    public realizeDataInfo(dataInfo: IDataInfo, parentId?: string): any & IDisposable {
         this.validateDisposal();
 
         if (dataInfo.id) {
@@ -93,6 +95,10 @@ export class DataInfoManager implements IDisposable {
             } else {
                 // Log Error [BUG].
             }
+        }
+
+        if (dataInfo.type === DataType.Buffer) {
+            return Buffer.from(dataInfo.value.data);
         }
 
         return dataInfo.value;
@@ -153,14 +159,19 @@ export class DataInfoManager implements IDisposable {
 
         const memberInfos: IDictionary<IDataInfo> = currentObjDataInfo.memberInfos;
 
-        let currentObj = Object.getPrototypeOf(target);
+        let currentObj = target;
 
         while (currentObj && currentObj !== Object.prototype) {
-            for (const propertyName of Object.getOwnPropertyNames(currentObj)) {
-                if (!Object.prototype.hasOwnProperty.call(memberInfos, propertyName)
-                    && !Object.prototype.hasOwnProperty.call(target, propertyName)
-                    && dataTypeOf(currentObj[propertyName]) === DataType.Function) {
-                    memberInfos[propertyName] = this.toDataInfo(currentObj[propertyName], currentObjDataInfo.id, false);
+            const propertyDescriptors = Object.getOwnPropertyDescriptors(currentObj);
+
+            for (const propertyName in propertyDescriptors) {
+                const propertyDescriptor = propertyDescriptors[propertyName];
+
+                if (!propertyDescriptor.enumerable
+                    || !propertyDescriptor.writable
+                    && !propertyDescriptor.get
+                    && !propertyDescriptor.set) {
+                    memberInfos[propertyName] = this.toDataInfo(propertyDescriptor.value, currentObjDataInfo.id, false);
                 }
             }
 
@@ -183,7 +194,7 @@ export class DataInfoManager implements IDisposable {
     private realizeFunctionDataInfo(dataInfo: IDataInfo, parentId?: string): any {
         const base = () => undefined;
 
-        base["dispose"] = this.generateDisposeFunc(dataInfo.id, parentId);
+        base[FuncName_DisposeAsync] = this.generateDisposeFunc(dataInfo.id, parentId);
 
         const handlers: ProxyHandler<Function> = {
             apply: async (target, thisArg, args): Promise<any> => {
@@ -209,7 +220,7 @@ export class DataInfoManager implements IDisposable {
         return funcProxy;
     }
 
-    private realizeObjectDataInfo(dataInfo: IObjectDataInfo, parentId?: string): any {
+    private realizeObjectDataInfo(dataInfo: IObjectDataInfo, parentId?: string): any & IDisposable {
         const base = Object.create(null);
         const handlers: ProxyHandler<Function> = {
             get: (target, property, receiver): any | Promise<any> => {
@@ -240,6 +251,7 @@ export class DataInfoManager implements IDisposable {
                 const valueDataInfo = this.toDataInfo(value, refId);
 
                 this.delegation.setPropertyAsync(refId, property, valueDataInfo);
+                return true;
             },
 
             has: (target, prop): boolean => {
@@ -255,11 +267,16 @@ export class DataInfoManager implements IDisposable {
 
         if (dataInfo.memberInfos) {
             for (const propertyName of Object.getOwnPropertyNames(dataInfo.memberInfos)) {
-                base[propertyName] = this.realizeDataInfo(dataInfo.memberInfos[propertyName], dataInfo.id);
+                Object.defineProperty(base, propertyName, {
+                    enumerable: false,
+                    configurable: false,
+                    writable: propertyName === FuncName_DisposeAsync,
+                    value: this.realizeDataInfo(dataInfo.memberInfos[propertyName], dataInfo.id)
+                });
             }
         }
 
-        base["dispose"] = this.generateDisposeFunc(dataInfo.id, parentId, base["dispose"]);
+        base[FuncName_DisposeAsync] = this.generateDisposeFunc(dataInfo.id, parentId, base[FuncName_DisposeAsync]);
 
         return objProxy;
     }
