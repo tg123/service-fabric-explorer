@@ -282,7 +282,7 @@ module Sfx {
                     nodeId: IdGenerator.deployedReplica(replica.raw.PartitionId),
                     displayName: () => replica.isStatelessService
                         ? replica.id
-                        : replica.id + " (" + replica.raw.ReplicaRole + ")",
+                        : replica.id + " (" + replica.role + ")",
                     selectAction: () => this.routes.navigate(() => replica.viewPath),
                     sortBy: () => replica.isStatelessService
                         ? [replica.id]
@@ -363,7 +363,7 @@ module Sfx {
                         nodeId: IdGenerator.replica(replica.id),
                         displayName: () => replica.isStatelessService
                             ? replica.raw.NodeName
-                            : `${replica.raw.ReplicaRole} (${replica.raw.NodeName})`,
+                            : `${replica.role} (${replica.raw.NodeName})`,
                         selectAction: () => this.routes.navigate(() => replica.viewPath),
                         badge: () => replica.healthState,
                         sortBy: () => replica.isStatelessService
