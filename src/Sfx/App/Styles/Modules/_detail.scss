@@ -349,8 +349,9 @@ table.detail-list {
 
 .actions-row {
     a {
-        &:not(:first-child) {
-            margin-left: 15px;
+        display: inline-block;
+        &:not(:last-child) {
+            margin-right: 15px;
         }
     }
 }
