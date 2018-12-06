@@ -100,6 +100,19 @@ module Sfx {
                 };
             });
 
+            let meshNode;
+            let getMeshPromise = this.data.getNodes().then(nodes => {
+                meshNode = {
+                    nodeId: IdGenerator.meshGroup(),
+                    displayName: () => "Mesh",
+                    selectAction: () => this.routes.navigate(() => nodes.viewPath),
+                    childrenQuery: () => this.getMeshModels(),
+                    badge: () => nodes.healthState,
+                    listSettings: this.settings.getNewOrExistingTreeNodeListSettings(nodes.viewPath),
+                    alwaysVisible: true
+                };
+            });
+
             let systemAppNode;
             let systemNodePromise = this.data.getSystemApp().then(systemApp => {
                 systemAppNode = {
@@ -138,11 +151,113 @@ module Sfx {
                         return [appsNode, nodesNode, networkNode, systemAppNode];
                     });
                 }
-                return this.$q.all([getAppsPromise, getNodesPromise, systemNodePromise]).then(() => {
-                    return [appsNode, nodesNode, systemAppNode];
+                return this.$q.all([getAppsPromise, getNodesPromise, systemNodePromise, getMeshPromise]).then(() => {
+                    return [appsNode, nodesNode, systemAppNode, meshNode];
                 });
             });
         }
+
+        private getMeshModels(): angular.IPromise<ITreeNode[]>{
+            return this.$q( (resolve, reject) => {
+                resolve([{
+                            nodeId: IdGenerator.meshAppGroup(),
+                            displayName: () => "Applications",
+                            childrenQuery: () => this.getMeshApplications()
+                        },
+                        {
+                            nodeId: IdGenerator.meshVolumeGroup(),
+                            displayName: () => "Volumes",
+                            childrenQuery: () => this.getMeshVolumes()
+                        },
+                        {
+                            nodeId: IdGenerator.meshNetworkGroup(),
+                            displayName: () => "Networks",
+                            childrenQuery: () => this.getMeshNetworks()
+                        },
+                        {
+                            nodeId: IdGenerator.meshGatewayGroup(),
+                            displayName: () => "Gateways",
+                            childrenQuery: () => this.getMeshGateways()
+                        },
+                        {
+                            nodeId: IdGenerator.meshSecretGroup(),
+                            displayName: () => "Secrets",
+                            childrenQuery: () => this.getMeshSecrets()
+                        },
+                        ]
+                    )
+                })
+        }
+
+
+        private getMeshApplications(): angular.IPromise<ITreeNode[]> {
+            return this.data.restClient.getMeshApplications().then(data => {
+                console.log(data);
+                return _.map(data, app => {
+                    return {
+                        nodeId: app.name,
+                        displayName: () => app.name,
+                        childrenQuery: () => this.getMeshApplicationServices(app.name)
+                    }
+                })
+            })
+        }
+
+        private getMeshApplicationServices(appName: string): angular.IPromise<ITreeNode[]> {
+            return this.data.restClient.getMeshApplicationServices(appName).then(data => {
+                console.log(data);
+                return _.map(data, service => {
+                    return {
+                        nodeId: service.name,
+                        displayName: () => service.name,
+                        childrenQuery: () => this.getMeshApplicationServiceReplicas(appName, service.name)
+                    }
+                })
+            })
+        }
+
+        private getMeshApplicationServiceReplicas(appName: string, serviceName: string): angular.IPromise<ITreeNode[]> {
+            return this.data.restClient.getMeshApplicationServiceReplicas(appName, serviceName).then(data => {
+                console.log(data);
+                return _.map(data, replica => {
+                    return {
+                        nodeId: replica.replicaName,
+                        displayName: () => replica.replicaName,
+                        //TODO simplify
+                        childrenQuery: () => this.$q( (resolve, reject) => {resolve()}).then( data => {
+                            return  _.map(replica.codePackages, codePackage => {
+                                    return {
+                                        nodeId: codePackage.name,
+                                        displayName: () => codePackage.name
+                                        }
+                                    })
+                            })
+                    }
+                })
+            })
+        }
+
+        private getMeshVolumes(): angular.IPromise<ITreeNode[]> {
+            return this.$q( (resolve, reject) => {
+                resolve([])
+                })
+        }
+        private getMeshNetworks(): angular.IPromise<ITreeNode[]> {
+            return this.$q( (resolve, reject) => {
+                resolve([])
+                })
+        }
+        private getMeshGateways(): angular.IPromise<ITreeNode[]> {
+            return this.$q( (resolve, reject) => {
+                resolve([])
+                })
+        }
+        private getMeshSecrets(): angular.IPromise<ITreeNode[]> {
+            return this.$q( (resolve, reject) => {
+                resolve([])
+                })
+        }
+
 
         private getNodes(): angular.IPromise<ITreeNode[]> {
             // For nodes we need more information like node status which is not available in health chunk API result.

@@ -37,6 +37,7 @@ module Sfx {
             this.routes = this.$injector.get<RoutesService>("routes");
             this.message = this.$injector.get<MessageService>("message");
             this.telemetry = this.$injector.get<TelemetryService>("telemetry");
+            console.log(this.telemetry);
             this.settings = this.$injector.get<SettingsService>("settings");
             this.data = this.$injector.get<DataService>("data");
             this.authSvc = this.$injector.get<AuthenticationService>("auth");

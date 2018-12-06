@@ -26,6 +26,10 @@ module Sfx {
             return "<network group>";
         }
 
+        public static meshGroup(): string {
+            return "<mesh group>";
+        }
+
         public static network(networkName: string): string {
             return networkName;
         }
@@ -83,6 +87,26 @@ module Sfx {
 
         public static deployedReplica(partitionId: string): string {
             return partitionId;
+        }
+
+        public static meshAppGroup(): string {
+            return "<mesh app group>";
+        }
+
+        public static meshVolumeGroup(): string {
+            return "<mesh volume group>";
+        }
+
+        public static meshNetworkGroup(): string {
+            return "<mesh network group>";
+        }
+        
+        public static meshGatewayGroup(): string {
+            return "<mesh gateway group>";
+        }
+
+        public static meshSecretGroup(): string {
+            return "<mesh secret group>";
         }
     }
 }

@@ -720,4 +720,44 @@ module Sfx {
         StoreRelativePath: string;
         FileCount: string;
     }
+    
+    //Mesh resources
+
+    export interface IRawMeshApplicationProperties {
+        description: string;
+        healthState: string;
+        serviceNames: string[];
+        status: string;
+        unhealthyEvaluation: string;
+    }
+
+    export interface IRawMeshApplication {
+        name: string;
+        properties: IRawMeshApplicationProperties;
+    }
+
+    //TODO change codePackages
+    export interface IRawMeshApplicationServiceProperties {
+        codePackages: any[];
+        description: string;
+        healthState: string;
+        networkRefs: any[];
+        osType: string;
+        replicaCount: string;
+        status: string;
+    }
+
+    export interface IRawMeshApplicationService {
+        name: string;
+        properties: IRawMeshApplicationServiceProperties
+    }
+
+    
+    //TODO change codePackages
+    export interface IRawMeshApplicationServiceReplica {
+        replicaName: string;
+        osType: string;
+        networkRefs: string;
+        codePackages: any[];
+    }
 }

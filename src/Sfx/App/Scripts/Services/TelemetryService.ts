@@ -75,7 +75,7 @@ module Sfx {
             this.delayedUpdates = {};
             this.appInsights = this.$window.appInsights;
 
-            this.isEnabled = this.shouldEnableTelemetry();
+            this.isEnabled = true//this.shouldEnableTelemetry();
             if (this.appInsights) {
                 if (this.appInsights.config) {
                     this.appInsights.config.disableTelemetry = !this.isEnabled;

@@ -61,6 +61,27 @@ module Sfx {
             return "#/networks";
         }
 
+        //mesh
+        public getMeshApplicationsViewPath(): string {
+            return "#/mesh/apps";
+        }
+
+        public getMeshVolumesViewPath(): string {
+            return "#/mesh/volumes";
+        }
+
+        public getMeshNetworksViewPath(): string {
+            return "#/mesh/networks";
+        }
+
+        public getMeshGatewaysViewPath(): string {
+            return "#/mesh/gateways";
+        }
+
+        public getMeshSecretsViewPath(): string {
+            return "#/mesh/secrets";
+        }
+
         public getNetworkViewPath(networkName: string): string {
             return "#/network/" + this.doubleEncode(networkName);
         }

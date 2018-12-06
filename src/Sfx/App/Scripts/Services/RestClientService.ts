@@ -630,6 +630,23 @@ module Sfx {
             return this.post(this.getApiUrl(url, RestClient.apiVersion60), "Restart replica", null, messageHandler);
         }
 
+        //mesh stuff
+        public getMeshApplications(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawMeshApplication[]> {
+            let url = "Resources/Applications";
+            return this.getFullCollection<IRawMeshApplication>(url, "Get Mesh Applications", RestClient.apiVersion64);
+        }
+
+        public getMeshApplicationServices(appName: string, appmessageHandler?: IResponseMessageHandler): angular.IPromise<IRawMeshApplicationService[]> {
+            let url = `Resources/Applications/${appName}/Services`;
+            return this.getFullCollection<IRawMeshApplicationService>(url, "Get Mesh Application Services", RestClient.apiVersion64);
+        }
+
+        //TODO change return type
+        public getMeshApplicationServiceReplicas(appName: string, serviceName: string, appmessageHandler?: IResponseMessageHandler): angular.IPromise<IRawMeshApplicationServiceReplica[]> {
+            let url = `Resources/Applications/${appName}/Services/${serviceName}/Replicas`;
+            return this.getFullCollection<IRawMeshApplicationServiceReplica>(url, "Get Mesh Application Service Replicas", RestClient.apiVersion64);
+        }
+
         private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
             let apiUrl = url;
             if (startTime && endTime) {
