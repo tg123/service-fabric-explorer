@@ -760,4 +760,103 @@ module Sfx {
         networkRefs: string;
         codePackages: any[];
     }
+
+    export interface IRawGatewayNetwork {
+        endpointRefs: any[];
+        name: string;
+    }
+
+    export interface IRawGatewayDestination {
+        applicationName: string;
+        endpointName: string;
+        serviceName: string;
+    }
+
+    export interface IRawGatewayHttpRouteMatchPath {
+        rewrite: string;
+        type: string;
+        value: string;
+    }
+
+    export interface IRawGatewayHttpRouteMatchRule {
+        path: IRawGatewayHttpRouteMatchPath;
+    }
+
+    export interface IRawGatewayRouteConfig {
+        destination: IRawGatewayDestination;
+        match: IRawGatewayHttpRouteMatchRule;
+        name: string;
+    }
+
+    export interface IRawGatewayHttpHostConfig {
+        name: string;
+        routes: IRawGatewayRouteConfig[];
+    }
+
+    export interface IRawGatewayHTTPConfig {
+        hosts: IRawGatewayHttpHostConfig[];
+        name: string;
+        port: number;
+    }
+
+    export interface IRawGatewayTCP {
+        destination: IRawGatewayDestination;
+        name: string;
+        port: number;
+    }
+
+    export interface IRawMeshGatewayProperties {
+        description: string;
+        destinationNetwork: IRawGatewayNetwork;
+        ipAddress: string;
+        sourceNetwork: IRawGatewayNetwork;
+        status: string;
+        StatusDetails: string;
+        tcp: IRawGatewayTCP[];
+        http: IRawGatewayHTTPConfig[];
+    }
+
+    export interface IRawMeshGateway {
+        properties: IRawMeshGatewayProperties;
+        name: string;
+    }
+
+
+    export interface IRawMeshSecretProperties {
+        contentType: string;
+        description: string;
+        kind: string;
+        status: string;
+        statusDetails: string;
+    }
+
+    export interface IRawMeshSecret {
+        name: string;
+        properties: IRawMeshSecretProperties;
+    }
+
+    export interface IRawSecretValue {
+        name: string;
+        value: string;
+    }
+
+    export interface IRawMeshVolumeProviderParametersAzureFile{
+        accountName: string;
+        accountKey: string;
+        shareName: string;
+    }
+
+    export interface IRawMeshVolumeProperties {
+        description: string;
+        status: string;
+        statusDetails: string;
+        provider: string;
+        azureFileParameters: IRawMeshVolumeProviderParametersAzureFile;
+    }
+
+    export interface IRawMeshVolume {
+        name: string;
+        properties: IRawMeshVolumeProperties;
+    }
+
 }

@@ -1,0 +1,43 @@
+<sfx-detail-view-navbar ctrl="MeshAppCtrl" name="{{application.name}}"></sfx-detail-view-navbar>
+
+<div class="main-view">
+    <div sfx-include src="'tab_' + MeshAppCtrl.activeTabId" ng-if="MeshAppCtrl.activeTabId" class="flex-child"></div>
+
+    <script type="text/ng-template" id="tab_essentials">
+        <div class="detail-pane essen-pane">
+            <div class="table-responsive">
+                <table class="essen-table" role="presentation">
+                    <tr>
+                        <th>Id</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td title="{{application.name}}">{{application.name}}</td>
+                        <td>{{application.raw.properties.description}}</td>
+                    </tr>
+                    <tr>
+                        <th>Health State</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td><sfx-badge badge-class="application.healthState.badgeClass" text="application.healthState.text"></sfx-badge></td>
+                        <td>{{application.raw.properties.status}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="detail-pane">
+            <h4>Unhealthy Evaluation</h4>
+            <p>
+                {{application.raw.properties.unhealthyEvaluation}}
+            </p>
+        </div>
+
+        <div class="detail-pane">
+                <h4>Services</h4>
+                <sfx-detail-list list="application.services" list-settings="listSettings"></sfx-detail-list>
+        </div>
+
+    </script>
+</div>

@@ -148,11 +148,11 @@ module Sfx {
                         };
                     });
                     return this.$q.all([getAppsPromise, getNodesPromise, getNetworkPromise, systemNodePromise]).then(() => {
-                        return [appsNode, nodesNode, networkNode, systemAppNode];
+                        return [appsNode, nodesNode, networkNode, systemAppNode, meshNode];
                     });
                 }
                 return this.$q.all([getAppsPromise, getNodesPromise, systemNodePromise, getMeshPromise]).then(() => {
-                    return [appsNode, nodesNode, systemAppNode, meshNode];
+                    return [appsNode, nodesNode, systemAppNode, meshNode]; 
                 });
             });
         }
@@ -167,22 +167,25 @@ module Sfx {
                         {
                             nodeId: IdGenerator.meshVolumeGroup(),
                             displayName: () => "Volumes",
-                            childrenQuery: () => this.getMeshVolumes()
+                            childrenQuery: () => this.getMeshVolumes(),
+                            selectAction: () => this.routes.navigate(() => this.routes.getMeshVolumesViewPath()),
                         },
                         {
                             nodeId: IdGenerator.meshNetworkGroup(),
                             displayName: () => "Networks",
-                            childrenQuery: () => this.getMeshNetworks()
+                            childrenQuery: () => this.getNetworks()
                         },
                         {
                             nodeId: IdGenerator.meshGatewayGroup(),
                             displayName: () => "Gateways",
-                            childrenQuery: () => this.getMeshGateways()
+                            childrenQuery: () => this.getMeshGateways(),
+                            selectAction: () => this.routes.navigate(() => this.routes.getMeshGatewaysViewPath()),
                         },
                         {
                             nodeId: IdGenerator.meshSecretGroup(),
                             displayName: () => "Secrets",
-                            childrenQuery: () => this.getMeshSecrets()
+                            childrenQuery: () => this.getMeshSecrets(),
+                            selectAction: () => this.routes.navigate(() => this.routes.getMeshSecretsViewPath()),
                         },
                         ]
                     )
@@ -191,41 +194,43 @@ module Sfx {
 
 
         private getMeshApplications(): angular.IPromise<ITreeNode[]> {
-            return this.data.restClient.getMeshApplications().then(data => {
-                console.log(data);
-                return _.map(data, app => {
+            return this.data.getMeshApps(true).then(apps => {
+                return _.map(apps.collection, app => {
                     return {
-                        nodeId: app.name,
+                        nodeId: IdGenerator.meshAppService(app.name),
                         displayName: () => app.name,
-                        childrenQuery: () => this.getMeshApplicationServices(app.name)
+                        childrenQuery: () => this.getMeshApplicationServices(app.name),
+                        selectAction: () => this.routes.navigate(() => app.viewPath),
                     }
                 })
             })
         }
 
         private getMeshApplicationServices(appName: string): angular.IPromise<ITreeNode[]> {
-            return this.data.restClient.getMeshApplicationServices(appName).then(data => {
-                console.log(data);
-                return _.map(data, service => {
+            return this.data.getMeshServices(appName, true).then(services => {
+                console.log(services);
+                return _.map(services.collection, service => {
                     return {
-                        nodeId: service.name,
+                        nodeId: IdGenerator.meshAppService(service.name),
                         displayName: () => service.name,
-                        childrenQuery: () => this.getMeshApplicationServiceReplicas(appName, service.name)
+                        childrenQuery: () => this.getMeshApplicationServiceReplicas(appName, service.name),
+                        selectAction: () => this.routes.navigate(() => service.viewPath),
                     }
                 })
             })
         }
 
         private getMeshApplicationServiceReplicas(appName: string, serviceName: string): angular.IPromise<ITreeNode[]> {
-            return this.data.restClient.getMeshApplicationServiceReplicas(appName, serviceName).then(data => {
-                console.log(data);
-                return _.map(data, replica => {
+            return this.data.getMeshServiceReplicas(appName, serviceName).then(replicas => {
+                console.log(replicas);
+                return _.map(replicas.collection, replica => {
                     return {
-                        nodeId: replica.replicaName,
-                        displayName: () => replica.replicaName,
+                        nodeId: IdGenerator.meshAppServiceReplica(replica.name),
+                        displayName: () => replica.nodeName,
+                        selectAction: () => this.routes.navigate(() => replica.viewPath),
                         //TODO simplify
                         childrenQuery: () => this.$q( (resolve, reject) => {resolve()}).then( data => {
-                            return  _.map(replica.codePackages, codePackage => {
+                            return  _.map(replica.raw.codePackages, codePackage => {
                                     return {
                                         nodeId: codePackage.name,
                                         displayName: () => codePackage.name
@@ -238,24 +243,52 @@ module Sfx {
         }
 
         private getMeshVolumes(): angular.IPromise<ITreeNode[]> {
-            return this.$q( (resolve, reject) => {
-                resolve([])
+            return this.data.getMeshVolumes(true).then(volumes => {
+                console.log(volumes);
+                return _.map(volumes.collection, volume => {
+                    return {
+                        nodeId: IdGenerator.meshVolume(volume.name),
+                        displayName: () => volume.name,
+                        selectAction: () => this.routes.navigate(() => volume.viewPath),
+                    }
                 })
+            })
         }
-        private getMeshNetworks(): angular.IPromise<ITreeNode[]> {
-            return this.$q( (resolve, reject) => {
-                resolve([])
-                })
-        }
+        
+        // private getMeshNetworks(): angular.IPromise<ITreeNode[]> {
+        //     this.data.getNetworks(true).then(net => {
+        //         networkNode = {
+        //             nodeId: IdGenerator.networkGroup(),
+        //             displayName: () => "Networks",
+        //             childrenQuery: () => this.getNetworks(),
+        //             selectAction: () => this.routes.navigate(() => net.viewPath),
+        //         };
+        //     });
+        // }
+        
         private getMeshGateways(): angular.IPromise<ITreeNode[]> {
-            return this.$q( (resolve, reject) => {
-                resolve([])
+            return this.data.getMeshGateways(true).then(gateways => {
+                console.log(gateways);
+                return _.map(gateways.collection, gateway => {
+                    return {
+                        nodeId: IdGenerator.meshGateway(gateway.name),
+                        displayName: () => gateway.name,
+                        selectAction: () => this.routes.navigate(() => gateway.viewPath),
+                    }
                 })
+            })
         }
         private getMeshSecrets(): angular.IPromise<ITreeNode[]> {
-            return this.$q( (resolve, reject) => {
-                resolve([])
+            return this.data.getMeshSecrets().then(secrets => {
+                console.log(secrets);
+                return _.map(secrets.collection, secret => {
+                    return {
+                        nodeId: IdGenerator.meshSecret(secret.name),
+                        displayName: () => secret.name,
+                        selectAction: () => this.routes.navigate(() => secret.viewPath),
+                    }
                 })
+            })
         }
 
 

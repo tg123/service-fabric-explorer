@@ -647,6 +647,51 @@ module Sfx {
             return this.getFullCollection<IRawMeshApplicationServiceReplica>(url, "Get Mesh Application Service Replicas", RestClient.apiVersion64);
         }
 
+        public getMeshApplication(appName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let url = `Resources/Applications/${appName}`;
+            return this.get(this.getApiUrl(url, RestClient.apiVersion64), "Get Mesh Application", messageHandler);
+        }
+
+        public getMeshGateways(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawMeshGateway[]> {
+            let url = "Resources/Gateways";
+            return this.getFullCollection<IRawMeshGateway>(url, "Get Mesh Gateways", RestClient.apiVersion64, messageHandler);
+        }
+
+        public getMeshSecrets(messageHandler?: IResponseMessageHandler): angular.IPromise<any[]> {
+            let url = "Resources/Secrets";
+            return this.getFullCollection<any>(url, "Get Mesh Secrets", RestClient.apiVersion64, messageHandler);
+        }
+
+        public getMeshSecret(secretName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let url = `Resources/Secrets/${secretName}`;
+            return this.get(this.getApiUrl(url, RestClient.apiVersion64), "Get Mesh Secret", messageHandler);
+        }
+
+        public getMeshSecretValues(secretName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<any[]> {
+            let url = `Resources/Secrets/${secretName}/values`;
+            return this.getFullCollection<any>(url, "Get Mesh SecretValues", RestClient.apiVersion64, messageHandler);
+        }
+        
+        public getMeshSecretValue(secretName: string, version: string, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let url = `Resources/Secrets/${secretName}/values/${version}`;
+            return this.get(this.getApiUrl(url, RestClient.apiVersion64), "Get Mesh SecretValue", messageHandler);
+        }
+
+        public getMeshSecretValueValue(secretName: string, version: string, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let url = `Resources/Secrets/${secretName}/values/${version}/list_value`;
+            return this.post<any>(this.getApiUrl(url, RestClient.apiVersion64), "Get Mesh SecretValue secret", messageHandler);
+        }
+
+        public getMeshVolume(volumeName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let url = `Resources/Volumes/${volumeName}`;
+            return this.get(this.getApiUrl(url, RestClient.apiVersion64), "Get Mesh Volume", messageHandler);
+        }
+
+        public getMeshVolumes(messageHandler?: IResponseMessageHandler): angular.IPromise<any[]> {
+            let url = "Resources/Volumes";
+            return this.getFullCollection<IRawMeshGateway>(url, "Get Mesh Volumes", RestClient.apiVersion64, messageHandler);
+        }
+
         private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
             let apiUrl = url;
             if (startTime && endTime) {

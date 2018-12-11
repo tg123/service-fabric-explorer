@@ -14,7 +14,12 @@ module Sfx {
         public apps: ApplicationCollection;
         public nodes: NodeCollection;
         public imageStore: ImageStore;
+        //mesh
         public networks: NetworkCollection;
+        public meshApps: MeshApplicationCollection;
+        public meshGateways: MeshGatewayCollection;
+        public meshSecrets: MeshSecretCollection;
+        public meshVolumes: MeshVolumeCollection;
 
         public constructor(
             public routes: RoutesService,
@@ -38,6 +43,10 @@ module Sfx {
             this.nodes = new NodeCollection(this);
             this.imageStore = new ImageStore(this);
             this.networks = new NetworkCollection(this);
+            this.meshApps = new MeshApplicationCollection(this);
+            this.meshGateways = new MeshGatewayCollection(this);
+            this.meshSecrets = new MeshSecretCollection(this);
+            this.meshVolumes = new MeshVolumeCollection(this);
         }
 
         public actionsEnabled(): boolean {
@@ -244,6 +253,71 @@ module Sfx {
         public getDeployedReplica(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, partitionId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<DeployedReplica> {
             return this.getDeployedReplicas(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).then(collection => {
                 return this.tryGetValidItem(collection, IdGenerator.deployedReplica(partitionId), forceRefresh, messageHandler);
+            });
+        }
+
+        //MESH
+        public getMeshApps(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshApplicationCollection> {
+            return this.meshApps.ensureInitialized(forceRefresh, messageHandler);
+        }
+
+        public getMeshApp(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshApplication> {
+            return this.getMeshApps(false, messageHandler).then(collection => {
+                return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
+            });
+        }
+
+        public getMeshServices(appName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<ServiceTypeCollection> {
+            return this.getMeshApp(appName, false, messageHandler).then(app => {
+                return app.services.ensureInitialized(forceRefresh, messageHandler);
+            });
+        }
+
+        public getMeshService(appName: string, serviceName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshService> {
+            return this.getMeshServices(appName, false, messageHandler).then(collection => {
+                return this.tryGetValidItem(collection, serviceName, forceRefresh, messageHandler);
+            });
+        }
+
+        public getMeshServiceReplicas(appName: string, serviceName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshServiceReplicaCollection> {
+            return this.getMeshService(appName, serviceName, false, messageHandler).then(service => {
+                return service.replicas.ensureInitialized(forceRefresh, messageHandler);
+            });
+        }
+
+        public getMeshServiceReplica(appName: string, serviceName: string, replicaId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshServiceReplica> {
+            return this.getMeshServiceReplicas(appName, serviceName, false, messageHandler).then(collection => {
+                return this.tryGetValidItem(collection, replicaId, forceRefresh, messageHandler);
+            });
+        }
+
+        public getMeshGateways(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshGatewayCollection> {
+            return this.meshGateways.ensureInitialized(forceRefresh, messageHandler);
+        }
+
+        public getMeshGateway(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshGateway> {
+            return this.getMeshGateways(false, messageHandler).then(collection => {
+                return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
+            });
+        }
+
+        public getMeshSecrets(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshSecretCollection> {
+            return this.meshSecrets.ensureInitialized(forceRefresh, messageHandler);
+        }
+
+        public getMeshSecret(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshSecret> {
+            return this.getMeshSecrets(false, messageHandler).then(collection => {
+                return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
+            });
+        }
+
+        public getMeshVolumes(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshVolumeCollection> {
+            return this.meshVolumes.ensureInitialized(forceRefresh, messageHandler);
+        }
+
+        public getMeshVolume(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<MeshVolume> {
+            return this.getMeshVolumes(false, messageHandler).then(collection => {
+                return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
             });
         }
 

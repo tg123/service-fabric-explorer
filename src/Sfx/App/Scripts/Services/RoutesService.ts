@@ -66,8 +66,24 @@ module Sfx {
             return "#/mesh/apps";
         }
 
+        public getMeshApplicationViewPath(appName: string): string {
+            return `#/mesh/app/${this.doubleEncode(appName)}`;
+        }
+
+        public getMeshAppServiceViewPath(appName: string, serviceName: string): string {
+            return `#/mesh/app/${this.doubleEncode(appName)}/service/${this.doubleEncode(serviceName)}`;
+        }
+
+        public getMeshAppServiceReplicaViewPath(appName: string, serviceName: string, replicaId: string): string {
+            return `#/mesh/app/${this.doubleEncode(appName)}/service/${this.doubleEncode(serviceName)}/replica/${this.doubleEncode(replicaId)}`;
+        }
+
         public getMeshVolumesViewPath(): string {
             return "#/mesh/volumes";
+        }
+
+        public getMeshVolumeViewPath(volumeName: string): string {
+            return `#/mesh/volume/${this.doubleEncode(volumeName)}`;
         }
 
         public getMeshNetworksViewPath(): string {
@@ -78,10 +94,18 @@ module Sfx {
             return "#/mesh/gateways";
         }
 
+        public getMeshGatewayViewPath(gatewayName: string): string {
+            return `#/mesh/gateway/${this.doubleEncode(gatewayName)}`;
+        }
+
         public getMeshSecretsViewPath(): string {
             return "#/mesh/secrets";
         }
 
+        public getMeshSecretViewPath(secretName: string): string {
+            return `#/mesh/secret/${this.doubleEncode(secretName)}`;
+        }
+        
         public getNetworkViewPath(networkName: string): string {
             return "#/network/" + this.doubleEncode(networkName);
         }
@@ -294,12 +318,51 @@ module Sfx {
                 controller: "PartitionViewController",
                 controllerAs: "partitionCtrl"
             });
-            whenWithTabs($routeProvider, "/apptype/:appTypeName/app/:appId/service/:serviceId/partition/:partitionId/replica/:replicaId", {
-                templateUrl: "partials/replica.html",
-                controller: "ReplicaViewController",
-                controllerAs: "replicaCtrl"
+            whenWithTabs($routeProvider, "/mesh/app/:appId", {
+                templateUrl: "partials/mesh/mesh-app.html",
+                controller: "MeshAppViewController",
+                controllerAs: "MeshAppCtrl"
             });
-
+            whenWithTabs($routeProvider, "/mesh/app/:appId/service/:serviceId", {
+                templateUrl: "partials/mesh/mesh-app-service.html",
+                controller: "MeshAppServiceViewController",
+                controllerAs: "MeshAppServiceCtrl"
+            });
+            whenWithTabs($routeProvider, "/mesh/app/:appId/service/:serviceId/replica/:replicaId", {
+                templateUrl: "partials/mesh/mesh-app-service-replica.html",
+                controller: "MeshAppServiceReplicaViewController",
+                controllerAs: "MeshAppServiceReplicaCtrl"
+            });
+            whenWithTabs($routeProvider, "/mesh/gateways", {
+                templateUrl: "partials/mesh/mesh-gateways.html",
+                controller: "MeshGatewaysViewController",
+                controllerAs: "MeshGatewaysCtrl"
+            });
+            whenWithTabs($routeProvider, "/mesh/gateway/:gatewayName", {
+                templateUrl: "partials/mesh/mesh-gateway.html",
+                controller: "MeshGatewayViewController",
+                controllerAs: "MeshGatewayCtrl"
+            });
+            whenWithTabs($routeProvider, "/mesh/secrets", {
+                templateUrl: "partials/mesh/mesh-secrets.html",
+                controller: "MeshSecretsViewController",
+                controllerAs: "MeshSecretsCtrl"
+            });
+            whenWithTabs($routeProvider, "/mesh/secret/:secretName", {
+                templateUrl: "partials/mesh/mesh-secret.html",
+                controller: "MeshSecretViewController",
+                controllerAs: "MeshSecretCtrl"
+            });
+            whenWithTabs($routeProvider, "/mesh/volumes", {
+                templateUrl: "partials/mesh/mesh-volumes.html",
+                controller: "MeshVolumesViewController",
+                controllerAs: "MeshVolumesCtrl"
+            });
+            whenWithTabs($routeProvider, "/mesh/volume/:volumeName", {
+                templateUrl: "partials/mesh/mesh-volume.html",
+                controller: "MeshVolumeViewController",
+                controllerAs: "MeshVolumeCtrl"
+            });
             $routeProvider.otherwise({
                 templateUrl: "partials/cluster.html",
                 controller: "ClusterViewController",

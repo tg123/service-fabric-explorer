@@ -1,0 +1,42 @@
+<sfx-detail-view-navbar ctrl="MeshVolumeCtrl" name="{{volume.name}}"></sfx-detail-view-navbar>
+
+<div class="main-view">
+    <div sfx-include src="'tab_' + MeshVolumeCtrl.activeTabId" ng-if="MeshVolumeCtrl.activeTabId" class="flex-child"></div>
+
+    <script type="text/ng-template" id="tab_essentials">
+        <div class="detail-pane essen-pane">
+            <div class="table-responsive">
+                <table class="essen-table" role="presentation">
+                    <tr>
+                        <th>Id</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td >{{volume.name}}</td>
+                        <td>{{volume.raw.properties.description}}</td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+
+        <div class="detail-pane essen-pane">
+                <h4>Azure File Parameters</h4>
+
+            <div class="table-responsive">
+                <table class="essen-table" role="presentation">
+                    <tr>
+                        <th>Share name</th>
+                        <th>Account name</th>
+                        <th>Account key</th>
+                    </tr>
+                    <tr>
+                        <td>{{volume.raw.properties.azureFileParameters.shareName}}</td>
+                        <td>{{volume.raw.properties.azureFileParameters.accountName}}</td>
+                        <td>{{volume.raw.properties.azureFileParameters.accountKey}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </script>
+</div>

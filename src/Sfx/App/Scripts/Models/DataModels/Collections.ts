@@ -453,6 +453,134 @@ module Sfx {
         }
     }
 
+    export class MeshApplicationCollection extends DataModelCollectionBase<MeshApplication> {
+        // public upgradingAppCount: number = 0;
+        public healthState: ITextAndBadge;
+
+        public constructor(data: DataService) {
+            super(data);
+        }
+
+        //TODO
+        public get viewPath(): string {
+            return this.data.routes.getAppsViewPath();
+        }
+
+        // public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): angular.IPromise<any> {
+        //     return this.updateCollectionFromHealthChunkList(clusterHealthChunk.ApplicationHealthStateChunks, item => IdGenerator.app(IdUtils.nameToId(item.ApplicationName))).then(() => {
+        //         this.updateAppsHealthState();
+        //         return this.refreshAppTypeGroups();
+        //     });
+        // }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getMeshApplications(messageHandler).then(items => {
+                return _.map(items, raw => new MeshApplication(this.data, raw));
+            });
+        }
+
+        protected updateInternal(): angular.IPromise<any> | void {
+            // this.upgradingAppCount = _.filter(this.collection, (app) => app.isUpgrading).length;
+            this.updateAppsHealthState();
+            // return this.refreshAppTypeGroups();
+        }
+
+        private updateAppsHealthState(): void {
+            // calculates the applications health state which is the max state value of all applications
+            this.healthState = this.length > 0
+                ? this.valueResolver.resolveHealthStatus(_.max(_.map(this.collection, app => HealthStateConstants.Values[app.healthState.text])))
+                : ValueResolver.healthStatuses[1];
+        }   
+    }
+
+    export class MeshServiceCollection extends DataModelCollectionBase<MeshService> {
+        public constructor(data: DataService, public parent: MeshApplication) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getMeshApplicationServices(this.parent.name, messageHandler)
+                .then(response => {
+                    return _.map(response, raw => new MeshService(this.data, raw, this.parent));
+                });
+        }
+    }
+
+    export class MeshServiceReplicaCollection extends DataModelCollectionBase<MeshServiceReplica> {
+        public constructor(data: DataService, public parent: MeshService) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getMeshApplicationServiceReplicas(this.parent.parent.name,this.parent.name, messageHandler)
+                .then(response => {
+                    return _.map(response, raw => new MeshServiceReplica(this.data, raw, this.parent));
+                });
+        }
+    }
+
+    export class MeshGatewayCollection extends DataModelCollectionBase<MeshGateway> {
+        // public upgradingAppCount: number = 0;
+        public healthState: ITextAndBadge;
+
+        public constructor(data: DataService) {
+            super(data);
+        }
+
+        public get viewPath(): string {
+            return this.data.routes.getMeshGatewaysViewPath();
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getMeshGateways(messageHandler).then(items => {
+                return _.map(items, raw => new MeshGateway(this.data, raw));
+            });
+        }
+
+        protected updateInternal(): angular.IPromise<any> | void {
+            // this.updateAppsHealthState();
+        }
+    }
+
+    export class MeshSecretValueCollection extends DataModelCollectionBase<MeshSecretValue> {
+        public constructor(data: DataService, public parent: MeshSecret) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getMeshSecretValues(this.parent.name, messageHandler)
+                .then(response => {
+                    return _.map(response, raw => new MeshSecretValue(this.data, raw, this.parent));
+                });
+        }
+    }
+
+    export class MeshSecretCollection extends DataModelCollectionBase<MeshSecret> {
+        public constructor(data: DataService) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getMeshSecrets()
+                .then(response => {
+                    return _.map(response, raw => new MeshSecret(this.data, raw));
+                });
+        }
+    }
+
+    export class MeshVolumeCollection extends DataModelCollectionBase<MeshVolume> {
+        public constructor(data: DataService) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getMeshVolumes()
+                .then(response => {
+                    return _.map(response, raw => new MeshVolume(this.data, raw));
+                });
+        }
+    }
+
     export class ApplicationTypeGroupCollection extends DataModelCollectionBase<ApplicationTypeGroup> {
         public constructor(data: DataService) {
             super(data);

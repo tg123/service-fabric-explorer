@@ -102,6 +102,8 @@ module Sfx {
                 return this.valueResolver.resolveHealthStatus(this.rawAny.HealthState);
             } else if (this.rawAny.AggregatedHealthState) {
                 return this.valueResolver.resolveHealthStatus(this.rawAny.AggregatedHealthState);
+            }else if(this.rawAny.properties){
+                return this.valueResolver.resolveHealthStatus(this.rawAny.properties.healthState);
             }
             return ValueResolver.unknown;
         }

@@ -89,12 +89,17 @@ module Sfx {
             return partitionId;
         }
 
+        //mesh
         public static meshAppGroup(): string {
             return "<mesh app group>";
         }
 
         public static meshVolumeGroup(): string {
             return "<mesh volume group>";
+        }
+
+        public static meshVolume(volumeName: string): string {
+            return volumeName;
         }
 
         public static meshNetworkGroup(): string {
@@ -105,9 +110,30 @@ module Sfx {
             return "<mesh gateway group>";
         }
 
+        public static meshGateway(gatewayName: string): string {
+            return gatewayName;
+        }
+
         public static meshSecretGroup(): string {
             return "<mesh secret group>";
         }
+
+        public static meshSecret(secretName: string): string {
+            return secretName;
+        }
+
+        public static meshApp(appName: string): string {
+            return appName;
+        }
+
+        public static meshAppService(serviceName: string): string {
+            return serviceName;
+        }
+        
+        public static meshAppServiceReplica(replicaName: string): string {
+            return replicaName;
+        }
+
     }
 }
 

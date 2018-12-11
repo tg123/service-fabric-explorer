@@ -46,6 +46,18 @@ module Sfx {
             return decodeURIComponent(routeParams.networkName);
         }
 
+        public static getGatewayName(routeParams: any): string {
+            return decodeURIComponent(routeParams.gatewayName);
+        }
+
+        public static getSecretName(routeParams: any): string {
+            return decodeURIComponent(routeParams.secretName);
+        }
+
+        public static getVolumetName(routeParams: any): string {
+            return decodeURIComponent(routeParams.volumeName);
+        }
+
         public static idToName(id: string): string {
             return Constants.FabricPrefix + id;
         }

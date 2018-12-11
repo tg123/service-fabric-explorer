@@ -51,6 +51,9 @@
 /// <reference path="models/datamodels/service.ts" />
 /// <reference path="models/datamodels/applicationtype.ts" />
 /// <reference path="models/datamodels/aad.ts" />
+/// <reference path="models/datamodels/Mesh/MeshApplication.ts" />
+/// <reference path="models/datamodels/Mesh/MeshService.ts" />
+/// <reference path="models/datamodels/Mesh/MeshServiceReplica.ts" />
 
 /// <reference path="viewmodels/treetypes.ts" />
 /// <reference path="viewmodels/treenodegroupviewmodel.ts" />
@@ -108,6 +111,14 @@
 /// <reference path="controllers/appsviewcontroller.ts" />
 /// <reference path="controllers/systemappsviewcontroller.ts" />
 /// <reference path="controllers/imagestoreviewcontroller.ts" />
+/// <reference path="controllers/mesh/meshAppServiceViewController.ts" />
+/// <reference path="controllers/mesh/meshAppViewController.ts" />
+/// <reference path="controllers/mesh/meshAppViewController.ts" />
+/// <reference path="controllers/mesh/meshGatewaysViewController.ts" />
+/// <reference path="controllers/mesh/meshNetworksViewController.ts" />
+/// <reference path="controllers/mesh/meshSecretsViewController.ts" />
+/// <reference path="controllers/mesh/meshVolumesViewController.ts" />
+
 
 // Bootstrap should be the last script to load to make sure all data structures are ready when bootstrap
 /// <reference path="common/authenticationbootstrap.ts" />
