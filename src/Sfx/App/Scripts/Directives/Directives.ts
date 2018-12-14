@@ -286,6 +286,19 @@ module Sfx {
             };
         });
 
+        module.directive("sfxHelp", (): angular.IDirective => {
+            return {
+                restrict: "AE",
+                replace: true,
+                scope: {
+                    helpText: "=",
+                    externalLink: "=",
+                    helpData: "="
+                },
+                templateUrl: "partials/help-badge.html"
+            };
+        });
+
         module.directive("sfxEventsView", () => new EventsViewDirective());
 
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());

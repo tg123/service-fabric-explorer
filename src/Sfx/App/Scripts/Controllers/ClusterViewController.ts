@@ -27,6 +27,7 @@ module Sfx {
         upgradeAppsCount: number;
         appsUpgradeTabViewPath: string;
         clusterEvents: ClusterEventList;
+        helpText: HelpText;
     }
 
     export class ClusterViewController extends MainViewController {
@@ -69,7 +70,7 @@ module Sfx {
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
             this.$scope.imageStore = this.data.imageStore;
             this.$scope.clusterEvents = this.data.createClusterEventList();
-
+            this.$scope.helpText = HelpText;
             this.refresh();
         }
 

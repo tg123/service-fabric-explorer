@@ -24,6 +24,7 @@ module Sfx {
         networks: NetworkOnNodeCollection;
         networkListSettings: ListSettings;
         clusterManifest: ClusterManifest;
+        helpText: HelpText;
     }
 
     export class NodeViewController extends MainViewController {
@@ -65,6 +66,8 @@ module Sfx {
             ]);
             this.$scope.networks = new NetworkOnNodeCollection(this.data, this.nodeName);
             this.$scope.clusterManifest = new ClusterManifest(this.data);
+
+            this.$scope.helpText = HelpText;
             this.refresh();
         }
 

@@ -29,6 +29,17 @@
             <h4>System</h4>
             <sfx-detail-list list="systemApp.services" list-settings="listSettings"></sfx-detail-list>
         </div>
+
+        <div class="detail-pane">
+            <div ng-repeat="description in helpText.serviceDescriptions">
+                    <h4>{{description.serviceName}}</h4>
+                    <p>
+                        {{description.description}}
+                        <a href="{{description.externalLink}}">Learn more </a>
+                    </p>
+            </div>
+        </div>       
+
     </script>
 
 

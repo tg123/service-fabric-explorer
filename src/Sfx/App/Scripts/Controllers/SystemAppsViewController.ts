@@ -9,6 +9,7 @@ module Sfx {
         listSettings: ListSettings;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        helpText: HelpText;
     }
 
     export class SystemAppsViewController extends MainViewController {
@@ -37,6 +38,8 @@ module Sfx {
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
 
             this.refresh();
+
+            this.$scope.helpText = HelpText;
         }
 
         protected refreshCommon(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {

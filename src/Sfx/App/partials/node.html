@@ -9,7 +9,9 @@
                 <table class="essen-table" role="presentation">
                     <tr>
                         <th>Name</th>
-                        <th>Upgrade Domain</th>
+                        <th>Upgrade Domain
+                                <sfx-help help-data="helpText.essentialsDescriptions.upgradeDomain"></sfx-help>
+                        </th>
                     </tr>
                     <tr>
                         <td>{{node.name}}</td>
@@ -17,7 +19,9 @@
                     </tr>
                     <tr>
                         <th>Health State</th>
-                        <th>Fault Domain</th>
+                        <th>Fault Domain
+                                <sfx-help help-data="helpText.essentialsDescriptions.faultDomain"></sfx-help>
+                        </th>
                     </tr>
 
                     <tr>
@@ -34,7 +38,9 @@
                     </tr>
                     <tr>
                         <th>Type</th>
-                        <th>Is Seed Node</th>
+                        <th>Is Seed Node
+                                <sfx-help help-data="helpText.essentialsDescriptions.seedNode"></sfx-help>
+                        </th>
                     </tr>
                     <tr>
                         <td>{{node.raw.Type}}</td>

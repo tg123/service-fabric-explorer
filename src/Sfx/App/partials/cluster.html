@@ -17,7 +17,9 @@
                     </tr>
                     <tr>
                         <th>Cluster Health State</th>
-                        <th>Upgrade Domains</th>
+                        <th>Upgrade Domains
+                                <sfx-help help-data="helpText.essentialsDescriptions.upgradeDomain"></sfx-help>
+                        </th>
                     </tr>
                     <tr>
                         <td><sfx-badge badge-class="clusterHealth.healthState.badgeClass" text="clusterHealth.healthState.text"></sfx-badge></td>
@@ -25,14 +27,18 @@
                     </tr>
                     <tr>
                         <th>System Application Health State</th>
-                        <th>Fault Domains</th>
+                        <th>Fault Domains
+                                <sfx-help help-data="helpText.essentialsDescriptions.faultDomain"></sfx-help>
+                        </th>
                     </tr>
                     <tr>
                         <td><sfx-badge badge-class="systemApp.healthState.badgeClass" text="systemApp.healthState.text"></sfx-badge></td>
                         <td>{{nodes.faultDomains.length}}</td>
                     </tr>
                     <tr>
-                        <th>Healthy Seed Nodes</th>                        
+                        <th>Healthy Seed Nodes
+                                <sfx-help help-data="helpText.essentialsDescriptions.seedNode"></sfx-help>
+                        </th>                        
                     </tr>
                     <tr>
                         <td>{{nodes.healthySeedNodes}}</td>                        

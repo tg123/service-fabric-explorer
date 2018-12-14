@@ -1,0 +1,33 @@
+<span>
+    <style>
+            /* Specify styling for tooltip contents */
+            .tooltip.customClass .tooltip-inner {
+                color: white;
+                background-color: black;
+                white-space: normal;
+                pointer-events: all; 
+                cursor: auto;
+                max-width: 50ch;
+            }
+
+            </style>
+    <span class="badge-container" style="cursor: pointer;">
+            <span>
+                    <img class="badge-icon" src="images/badge-unknown.svg" 
+                    tooltip-trigger="'outsideClick'" uib-tooltip-template="'myTooltipTemplate.html'" tooltip-class="customClass"></img>
+            </span>
+    </span>
+        
+        <script type="text/ng-template" id="myTooltipTemplate.html">
+            <div>
+                <div ng-if="helpData">
+                        <p>{{helpData.text}}</p>
+                        <a href="{{helpData.externalLink}}" target="_blank">Learn more </a>
+                </div>
+                <div ng-if="!helpData">
+                    <p>{{helpText}}</p>
+                    <a href="{{externalLink}}" target="_blank">Learn more </a>
+                </div>
+            </div>
+        </script>
+</span>
