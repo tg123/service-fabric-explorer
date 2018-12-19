@@ -89,6 +89,14 @@ module Sfx {
             return undefined;
         }
 
+        public static getSettingsHandler(): Promise<Standalone.ISettings> {
+            if(this.isStandalone()){
+                return sfxModuleManager.getComponentAsync<Standalone.ISettings>("settings.default");
+            }
+
+            return undefined;
+        }
+
         private static extractQueryItem(queryString: string, name: string): string {
             if (queryString) {
                 let urlParameters = window.location.search.split("?")[1];

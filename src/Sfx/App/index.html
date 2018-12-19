@@ -79,6 +79,15 @@
                                     min="5" max="200" step="5" aria-labelledby="page-size-label" />
                             </li>
                             <li role="separator" class="divider"></li>
+                            <li>
+                                <div style="padding: 2px 15px;" ng-controller="TelemetrySettingsController as telemetryCtrl">
+                                    <span>Allow Telemetry</span>
+                                    <button class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="false"
+                                        style="margin-left: 10px; float: right; margin-top: -9px;" ng-click="telemetryCtrl.setTelemetry()">
+                                        {{telemetryCtrl.telemetrySvc.isEnabled ? 'On' : 'Off' }}
+                                    </button>
+                                </div>
+                            </li>
                             <li class="hoverable-link">
                                 <a href="https://go.microsoft.com/fwlink/?LinkId=512132" title="Privacy and Cookies" target="_blank">
                                     <span>Privacy and Cookies</span>

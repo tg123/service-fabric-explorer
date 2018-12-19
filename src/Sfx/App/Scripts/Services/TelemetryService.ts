@@ -10,9 +10,11 @@ module Sfx {
         trackPageView(): void;
         trackActionEvent(name: string, source: string, result: any): void;
         trackEvent(message: string): void;
+        setEnabledTelemetry(state: boolean): void;
     }
 
     export class TelemetryService implements ITelemetryService {
+        public static storageName: string = "telemetryEnabled";
         public static TelemetryEnabledHostsRegex: RegExp = /(^|\.)azure\.com($|:)/i;
         private static DelayUpdateTimeInSeconds: number = 10;
 
@@ -71,6 +73,17 @@ module Sfx {
             });
         }
 
+        public setEnabledTelemetry(state: boolean): void {
+            if(StandaloneIntegration.isStandalone()){
+                StandaloneIntegration.getSettingsHandler().
+            }else{
+                this.storage.setValue(TelemetryService.storageName, state);
+            }
+            this.isEnabled = state;
+
+            console.log(this.storage.getValueBoolean(TelemetryService.storageName, false));
+        }
+
         private initialize() {
             this.delayedUpdates = {};
             this.appInsights = this.$window.appInsights;
@@ -91,7 +104,11 @@ module Sfx {
         }
 
         private shouldEnableTelemetry(): boolean {
-            return this.appInsights && TelemetryService.TelemetryEnabledHostsRegex.test(this.$location.host());
+            // console.log(this.storage.getValueBoolean('telemetryEnabled', false));
+            this.storage.setValue(TelemetryService.storageName, true);
+            // console.log(this.storage.getValueBoolean('telemetryEnabled', false));
+            return true;
+            //return this.appInsights && TelemetryService.TelemetryEnabledHostsRegex.test(this.$location.host());
         }
 
         private trackPropertyChangedEvent(key: string, oldValue: string, newValue: string): void {
