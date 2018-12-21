@@ -74,11 +74,11 @@ module Sfx {
         }
 
         public setEnabledTelemetry(state: boolean): void {
-            if(StandaloneIntegration.isStandalone()){
-                StandaloneIntegration.getSettingsHandler().
-            }else{
+            // if(StandaloneIntegration.isStandalone()){
+            //     StandaloneIntegration.getSettingsHandler().
+            // }else{
                 this.storage.setValue(TelemetryService.storageName, state);
-            }
+            // }
             this.isEnabled = state;
 
             console.log(this.storage.getValueBoolean(TelemetryService.storageName, false));
@@ -104,9 +104,7 @@ module Sfx {
         }
 
         private shouldEnableTelemetry(): boolean {
-            // console.log(this.storage.getValueBoolean('telemetryEnabled', false));
-            this.storage.setValue(TelemetryService.storageName, true);
-            // console.log(this.storage.getValueBoolean('telemetryEnabled', false));
+            this.storage.setValue(TelemetryService.storageName, false);
             return true;
             //return this.appInsights && TelemetryService.TelemetryEnabledHostsRegex.test(this.$location.host());
         }

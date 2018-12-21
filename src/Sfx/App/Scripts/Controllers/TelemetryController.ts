@@ -11,7 +11,7 @@ module Sfx {
         }
 
         public setTelemetry() {
-            // this.telemetrySvc.isEnabled = !this.telemetrySvc.isEnabled;
+
             console.log(this.telemetrySvc)
             this.telemetrySvc.setEnabledTelemetry(!this.telemetrySvc.isEnabled);
         }
