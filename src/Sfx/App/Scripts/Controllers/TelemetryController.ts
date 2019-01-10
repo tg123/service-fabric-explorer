@@ -10,10 +10,18 @@ module Sfx {
             super($injector);
         }
 
-        public setTelemetry() {
+        public setHasBeenPrompted(state: boolean): void {
+            this.telemetrySvc.setPromptedTelemtry(state);
+        }
 
-            console.log(this.telemetrySvc)
-            this.telemetrySvc.setEnabledTelemetry(!this.telemetrySvc.isEnabled);
+        public setTelemetry(state?: boolean): void {
+            this.setHasBeenPrompted(true);
+
+            if (state !== undefined) {
+                this.telemetrySvc.setEnabledTelemetry(state);
+            }else {
+                this.telemetrySvc.setEnabledTelemetry(!this.telemetrySvc.isEnabled);
+            }
         }
     }
 

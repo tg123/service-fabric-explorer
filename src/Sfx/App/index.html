@@ -83,7 +83,7 @@
                                 <div style="padding: 2px 15px;" ng-controller="TelemetrySettingsController as telemetryCtrl">
                                     <span>Allow Telemetry</span>
                                     <button class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="false"
-                                        style="margin-left: 10px; float: right; margin-top: -9px;" ng-click="telemetryCtrl.setTelemetry()">
+                                        style="margin-left: 10px; float: right; margin-top: -9px;" ng-click="telemetryCtrl.setTelemetry();  $event.stopPropagation()">
                                         {{telemetryCtrl.telemetrySvc.isEnabled ? 'On' : 'Off' }}
                                     </button>
                                 </div>
@@ -142,6 +142,19 @@
             <strong ng-show="msg.severity === 1">Warning:</strong>
             <strong ng-show="msg.severity === 2">Error:</strong>
             <span class="preserve-whitespace-wrap">{{msg.message}}</span>
+        </div>
+    </div>
+
+    <!-- Telemetry Prompt -->
+    <div ng-controller="TelemetrySettingsController as telemetryCtrl" class="snackbar" ng-show="!telemetryCtrl.telemetrySvc.hasBeenPrompted">
+        Would you like to enable telemetry? You can turn this off at any time.
+        <div style="margin-top: 5px;">
+            <button class="btn btn-primary" type="button" aria-haspopup="true" ng-click="telemetryCtrl.setTelemetry(true)">
+                Yes
+            </button>
+            <button class="btn btn-primary" type="button" aria-haspopup="true" ng-click="telemetryCtrl.setTelemetry(false)">
+                No
+            </button>
         </div>
     </div>
 

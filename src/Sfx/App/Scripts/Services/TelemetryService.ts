@@ -15,11 +15,12 @@ module Sfx {
 
     export class TelemetryService implements ITelemetryService {
         public static storageName: string = "telemetryEnabled";
+        public static hasBeenPromptedStorageName: string = "telemetryPrompt";
         public static TelemetryEnabledHostsRegex: RegExp = /(^|\.)azure\.com($|:)/i;
         private static DelayUpdateTimeInSeconds: number = 10;
 
         public isEnabled: boolean = false;
-
+        public hasBeenPrompted: boolean = true;
         private appInsights: any;
         private delayedUpdates: {
             [key: string]: PropertyUpdatePromise
@@ -73,15 +74,13 @@ module Sfx {
             });
         }
 
-        public setEnabledTelemetry(state: boolean): void {
-            // if(StandaloneIntegration.isStandalone()){
-            //     StandaloneIntegration.getSettingsHandler().
-            // }else{
-                this.storage.setValue(TelemetryService.storageName, state);
-            // }
-            this.isEnabled = state;
+        public setPromptedTelemtry(state: boolean): void {
+            this.storage.setValue(TelemetryService.hasBeenPromptedStorageName, state);
+            this.hasBeenPrompted = state;        }
 
-            console.log(this.storage.getValueBoolean(TelemetryService.storageName, false));
+        public setEnabledTelemetry(state: boolean): void {
+            this.storage.setValue(TelemetryService.storageName, state);
+            this.isEnabled = state;
         }
 
         private initialize() {
@@ -89,6 +88,8 @@ module Sfx {
             this.appInsights = this.$window.appInsights;
 
             this.isEnabled = this.shouldEnableTelemetry();
+            this.hasBeenPrompted = this.storage.getValueBoolean(TelemetryService.hasBeenPromptedStorageName, false) || this.isEnabled;
+
             if (this.appInsights) {
                 if (this.appInsights.config) {
                     this.appInsights.config.disableTelemetry = !this.isEnabled;
@@ -104,9 +105,9 @@ module Sfx {
         }
 
         private shouldEnableTelemetry(): boolean {
-            this.storage.setValue(TelemetryService.storageName, false);
-            return true;
-            //return this.appInsights && TelemetryService.TelemetryEnabledHostsRegex.test(this.$location.host());
+            return this.storage.getValueBoolean(TelemetryService.storageName, false);
+            // return this.appInsights && TelemetryService.TelemetryEnabledHostsRegex.test(this.$location.host())
+            //        && this.storage.getValueBoolean(TelemetryService.storageName, false);
         }
 
         private trackPropertyChangedEvent(key: string, oldValue: string, newValue: string): void {
