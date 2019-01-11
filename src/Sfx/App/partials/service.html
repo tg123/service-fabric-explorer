@@ -67,6 +67,16 @@
                             <td ng-if="service.description.raw.ServiceDnsName">{{service.description.raw.ServiceDnsName}}</td>
                         </tr>
                     </tbody>
+                    <tbody ng-if="helpText">
+                        <tr>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>
+                            {{helpText.description}} <a href="{{helpText.externalLink}}" target="_blank">Learn more </a> 
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>

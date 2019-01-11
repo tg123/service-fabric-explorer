@@ -12,6 +12,7 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         serviceEvents: ServiceEventList;
+        helpText: IHelpTextServiceEntry;
     }
 
     export class ServiceViewController extends MainViewController {
@@ -38,6 +39,9 @@ module Sfx {
             if (this.appTypeName === Constants.SystemAppTypeName) {
                 // remove manifest tab for system app service
                 delete (this.tabs["manifest"]);
+
+                //get service description if one exists
+                this.$scope.helpText = HelpText.getServiceDescription(this.serviceId);
 
                 this.selectTreeNode([
                     IdGenerator.cluster(),

@@ -1,33 +1,39 @@
 <span>
     <style>
             /* Specify styling for tooltip contents */
-            .tooltip.customClass .tooltip-inner {
+            .popover.customClass .popover-inner {
                 color: white;
                 background-color: black;
                 white-space: normal;
                 pointer-events: all; 
                 cursor: auto;
-                max-width: 50ch;
+                border: 0px;
+                text-align: center;
             }
-
+            
+            .popover {
+                background-color: black;
+            }
+            .popover.top>.arrow:after {
+                border-top-color: black;
+            }
             </style>
     <span class="badge-container" style="cursor: pointer;">
-            <span>
-                    <img class="badge-icon" src="images/badge-unknown.svg" 
-                    tooltip-trigger="'outsideClick'" uib-tooltip-template="'myTooltipTemplate.html'" tooltip-class="customClass"></img>
-            </span>
+        <span>
+            <div class="badge-icon dropdown-toggle dark-background-link bowtie-icon bowtie-status-info-outline" 
+            popover-trigger="'outsideClick'" uib-popover-template="'myTooltipTemplate.html'" popover-class="customClass"></div>
+        </span>
     </span>
-        
-        <script type="text/ng-template" id="myTooltipTemplate.html">
-            <div>
-                <div ng-if="helpData">
-                        <p>{{helpData.text}}</p>
-                        <a href="{{helpData.externalLink}}" target="_blank">Learn more </a>
-                </div>
-                <div ng-if="!helpData">
-                    <p>{{helpText}}</p>
-                    <a href="{{externalLink}}" target="_blank">Learn more </a>
-                </div>
+    <script type="text/ng-template" id="myTooltipTemplate.html">
+        <div>
+            <div ng-if="helpData">
+                <p>{{helpData.text}}</p>
+                <a href="{{helpData.externalLink}}" target="_blank">Learn more </a>
             </div>
-        </script>
+            <div ng-if="!helpData">
+                <p>{{helpText}}</p>
+                <a href="{{externalLink}}" target="_blank">Learn more </a>
+            </div>
+        </div>
+    </script>
 </span>
