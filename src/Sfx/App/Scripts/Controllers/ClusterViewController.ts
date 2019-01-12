@@ -65,7 +65,9 @@ module Sfx {
             this.$scope.clusterLoadInformation = this.data.clusterLoadInformation;
             this.$scope.clusterManifest = this.data.clusterManifest;
             this.$scope.systemApp = this.data.systemApp;
+            console.log(this.$scope.systemApp);
             this.$scope.nodes = this.data.nodes;
+            console.log(this.$scope.nodes);
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
             this.$scope.imageStore = this.data.imageStore;
             this.$scope.clusterEvents = this.data.createClusterEventList();

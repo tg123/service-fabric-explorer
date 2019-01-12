@@ -236,7 +236,7 @@ module Sfx {
         public upgradeDomains: string[];
         public faultDomains: string[];
         public healthySeedNodes: string;
-
+        public seedNodeHealthState: ITextAndBadge;
         public constructor(data: DataService) {
             super(data);
         }
@@ -274,8 +274,12 @@ module Sfx {
             let seedNodes = _.filter(this.collection, node => node.raw.IsSeedNode);
             let healthyNodes = _.filter(seedNodes, node => node.healthState.text === HealthStateConstants.OK);
 
-            this.healthySeedNodes = seedNodes.length.toString() + " (" +
-                Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";
+            const healthState = Math.round(healthyNodes.length / seedNodes.length * 100);
+            this.healthySeedNodes = `${seedNodes.length.toString()} (${healthState.toString()}%)`;
+            this.seedNodeHealthState = {
+                text: healthState === 100 ? HealthStateConstants.OK : HealthStateConstants.Warning,
+                badgeId: healthState === 100 ? BadgeConstants.BadgeOK : BadgeConstants.BadgeWarning
+            }
         }
 
         private updateNodesHealthState(): void {
