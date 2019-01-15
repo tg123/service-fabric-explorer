@@ -12,6 +12,7 @@ module Sfx {
         upgradeAppsListSettings: ListSettings;
         upgradeProgresses: ApplicationUpgradeProgress[];
         appEvents: ApplicationEventList;
+        helpText: HelpText;
     }
 
     export class AppsViewController extends MainViewController {

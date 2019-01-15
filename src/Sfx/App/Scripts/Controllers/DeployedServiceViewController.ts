@@ -10,6 +10,7 @@ module Sfx {
         serviceManifest: string;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        helpText: HelpText
     }
 
     export class DeployedServiceViewController extends MainViewController {
@@ -41,6 +42,7 @@ module Sfx {
 
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+            this.$scope.helpText = HelpText;
 
             this.refresh();
         }

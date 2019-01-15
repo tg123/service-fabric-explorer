@@ -11,6 +11,7 @@ module Sfx {
         listSettings: ListSettings;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        helpText: HelpText;
     }
 
     export class DeployedAppViewController extends MainViewController {
@@ -42,6 +43,7 @@ module Sfx {
                 new ListColumnSettingForBadge("health.healthState", "Health State"),
                 new ListColumnSettingWithFilter("raw.Status", "Status")
             ]);
+            this.$scope.helpText = HelpText;
 
             this.refresh();
         }

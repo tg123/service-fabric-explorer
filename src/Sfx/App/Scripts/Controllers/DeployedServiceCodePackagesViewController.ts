@@ -32,7 +32,6 @@ module Sfx {
                 IdGenerator.deployedServicePackage(this.serviceId, this.activationId),
                 IdGenerator.deployedCodePackageGroup()
             ]);
-
             this.refresh();
         }
 
@@ -40,7 +39,8 @@ module Sfx {
             return this.data.getDeployedCodePackages(this.nodeName, this.appId, this.serviceId, this.activationId, true, messageHandler)
                 .then(codePackages => {
                     this.$scope.codePackages = codePackages;
-
+                    console.log(this.$scope.codePackages);
+                    console.log(this.$scope.listSettings)
                     if (!this.$scope.listSettings && codePackages.length > 0) {
                         let columnSettings = [
                             new ListColumnSettingForLink("name", "Name", item => item.viewPath),

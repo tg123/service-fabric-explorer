@@ -12,7 +12,8 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         serviceEvents: ServiceEventList;
-        helpText: IHelpTextServiceEntry;
+        helpTextInfo: IHelpTextServiceEntry;
+        helpText: HelpText
     }
 
     export class ServiceViewController extends MainViewController {
@@ -41,7 +42,7 @@ module Sfx {
                 delete (this.tabs["manifest"]);
 
                 //get service description if one exists
-                this.$scope.helpText = HelpText.getServiceDescription(this.serviceId);
+                this.$scope.helpTextInfo = HelpText.getServiceDescription(this.serviceId);
 
                 this.selectTreeNode([
                     IdGenerator.cluster(),
@@ -68,6 +69,7 @@ module Sfx {
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.serviceEvents = this.data.createServiceEventList(this.serviceId);
+            this.$scope.helpText = HelpText;
 
             this.refresh();
         }

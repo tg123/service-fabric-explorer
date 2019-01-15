@@ -28,7 +28,9 @@
                     <tbody ng-if="service.isStatefulService">
                         <tr>
                             <th>Status</th>
-                            <th>Minimum Replica Size</th>
+                            <th>Minimum Replica Size
+                                <sfx-help help-data="helpText.essentialsDescriptions.minReplicaSize"></sfx-help>
+                            </th>
                         </tr>
                         <tr>
                             <td>{{service.raw.ServiceStatus}}</td>
@@ -36,7 +38,9 @@
                         </tr>
                         <tr>
                             <th>Service Kind</th>
-                            <th>Target Replica Size</th>
+                            <th>Target Replica Size
+                                <sfx-help help-data="helpText.essentialsDescriptions.targetReplicaSize"></sfx-help>
+                            </th>
                         </tr>
                         <tr>
                             <td>{{service.raw.ServiceKind}}</td>
@@ -67,13 +71,13 @@
                             <td ng-if="service.description.raw.ServiceDnsName">{{service.description.raw.ServiceDnsName}}</td>
                         </tr>
                     </tbody>
-                    <tbody ng-if="helpText">
+                    <tbody ng-if="helpTextInfo">
                         <tr>
                             <th>Description</th>
                         </tr>
                         <tr>
                             <td>
-                            {{helpText.description}} <a href="{{helpText.externalLink}}" target="_blank">Learn more </a> 
+                            {{helpTextInfo.description}} <a href="{{helpTextInfo.externalLink}}" target="_blank">Learn more </a> 
                             </td>
                         </tr>
                     </tbody>
@@ -82,7 +86,7 @@
         </div>
 
         <div class="detail-pane">
-            <h4>Unhealthy Evaluations</h4>
+            <h4>Unhealthy Evaluations <sfx-help help-data="helpText.essentialsDescriptions.unhealthyEvaluation"></sfx-help></h4>
             <sfx-detail-list list="service.health.unhealthyEvaluations" list-settings="unhealthyEvaluationsListSettings"></sfx-detail-list>
         </div>
 

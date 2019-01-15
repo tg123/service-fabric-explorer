@@ -10,6 +10,7 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         replicaEvents: ReplicaEventList;
+        helpText: HelpText;
     }
 
     export class ReplicaViewController extends MainViewController {

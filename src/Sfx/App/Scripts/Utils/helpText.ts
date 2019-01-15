@@ -18,7 +18,7 @@ module Sfx {
     export class HelpText {
         static essentialsDescriptions = {
             upgradeDomain : {
-                text : "Defines sets of nodes that are upgraded at the same time. Help the Cluster resource manager with management operations like upgrades",
+                text : "Defines sets of nodes that are upgraded at the same time. Help the Cluster resource manager with management operations like upgrades.",
                 externalLink: "https://aka.ms/sfhelpupgradedomain"
             },
             faultDomain : {
@@ -30,24 +30,28 @@ module Sfx {
                 externalLink: "https://aka.ms/sfhelpseednode"
             },
             minReplicaSize : {
-                text : "Defines sets of nodes that are upgraded at the same time. Help the Cluster resource manager with management operations like upgrades",
+                text : "The number of replicas necessary for the service.",
                 externalLink: "https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-resource-manager-cluster-description"
             },
             targetReplicaSize : {
-                text : "Defines sets of nodes that are upgraded at the same time. Help the Cluster resource manager with management operations like upgrades",
+                text : "The ideal number of replicas for the service to be considered healthy.",
                 externalLink: "https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-resource-manager-cluster-description"
+            },
+            unhealthyEvaluation : {
+                text : "Users and automated services can evaluate health for any entity at any time.",
+                externalLink: "aka.ms/sfhelpunhealthyevaluation"
             }
         };
 
         static serviceDescriptions: IHelpTextServiceEntry[] = [
             {
                 serviceName: "system/dnsservice",
-                description: "Optional service that allows the cluster to discover other services using the DNS protocol",
+                description: "Optional service that allows the cluster to discover other services using the DNS protocol.",
                 externalLink: "https://aka.ms/sfhelpdns"
             },
             {
                 serviceName: "system/eventstoreservice",
-                description: "",
+                description: "A service that maintains events from the cluster.",
                 externalLink: "https://aka.ms/sfhelpeventstore"
             },
             {
@@ -62,12 +66,12 @@ module Sfx {
             },
             {
                 serviceName: "system/namingservice",
-                description: "resolves service names to a location in the cluster",
+                description: "resolves service names to a location in the cluster.",
                 externalLink: "https://aka.ms/sfhelpNaming"
             },
             {
                 serviceName: "system/repairmanagerservice",
-                description: "optional service that can provide repairs for Patch Orchestration Application and azure maintenance repairs for silver and gold durability clusters",
+                description: "optional service that can provide repairs for Patch Orchestration Application and azure maintenance repairs for silver and gold durability clusters.",
                 externalLink: "https://aka.ms/sfhelprepairmanager"
             }
         ];
