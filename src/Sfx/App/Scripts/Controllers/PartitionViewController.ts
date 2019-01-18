@@ -57,7 +57,6 @@ module Sfx {
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.partitionEvents = this.data.createPartitionEventList(this.partitionId);
             this.$scope.helpText = HelpText;
-            
             this.refresh();
         }
 

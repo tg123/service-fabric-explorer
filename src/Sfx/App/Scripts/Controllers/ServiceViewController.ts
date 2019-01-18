@@ -13,7 +13,7 @@ module Sfx {
         unhealthyEvaluationsListSettings: ListSettings;
         serviceEvents: ServiceEventList;
         helpTextInfo: IHelpTextServiceEntry;
-        helpText: HelpText
+        helpText: HelpText;
     }
 
     export class ServiceViewController extends MainViewController {

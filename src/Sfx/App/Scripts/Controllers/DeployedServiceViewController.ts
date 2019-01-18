@@ -10,7 +10,7 @@ module Sfx {
         serviceManifest: string;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
-        helpText: HelpText
+        helpText: HelpText;
     }
 
     export class DeployedServiceViewController extends MainViewController {
