@@ -124,6 +124,7 @@
                     "name": "electron/pack",
                     "icon": "icons/icon"
                 },
+                "test-p",
                 {
                     "name": "electron/rpm",
                     "section": "utils",
@@ -132,7 +133,8 @@
                         "Utility",
                         "Development"
                     ]
-                }
+                },
+                "test-p"
             ]
         },
         "publish@macOS": {
