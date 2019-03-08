@@ -155,7 +155,9 @@
                         "appCategoryType": "Utilities"
                     }
                 },
-                "electron/zip"
+                "test-p",
+                "electron/zip",
+                "test-p"
             ]
         },
         "publish@msi": {

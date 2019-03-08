@@ -18,6 +18,9 @@ const log = require("cookie.gulp/log");
  * @returns {NodeJS.ReadWriteStream}
  */
 function constructProcessor(config, buildTarget, buildInfos, packageJson) {
+
+    log.info("cwd:", process.cwd());
+    
     return new Transform({
         objectMode: true,
         /** @param {import("vinyl")} chunk */
