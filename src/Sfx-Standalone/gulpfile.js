@@ -22,7 +22,7 @@ function constructProcessor(config, buildTarget, buildInfos, packageJson) {
         objectMode: true,
         /** @param {import("vinyl")} chunk */
         transform(chunk, encoding, callback) {
-            log.info(require.resolve.paths("electron-installer-debian"));
+            log.info("cwd:", process.cwd());
             log.info("Is electron-installer-debian Installed: ", dd.isModuleInstalled("electron-installer-debian"));
             this.push(chunk);
             callback();
