@@ -8,6 +8,8 @@ const cookie = require("cookie.gulp");
 const dd = require("cookie.gulp/dynamic-dependency");
 const { Transform, PassThrough } = require("stream");
 const log = require("cookie.gulp/log");
+const fs = require("fs");
+const path = require("path");
 
 /**
  * 
@@ -20,13 +22,15 @@ const log = require("cookie.gulp/log");
 function constructProcessor(config, buildTarget, buildInfos, packageJson) {
 
     log.info("cwd:", process.cwd());
-    
+
     return new Transform({
         objectMode: true,
         /** @param {import("vinyl")} chunk */
         transform(chunk, encoding, callback) {
-            log.info("cwd:", process.cwd());
-            log.info("Is electron-installer-debian Installed: ", dd.isModuleInstalled("electron-installer-debian"));
+            const address = path.join(process.cwd(), "node_modules", "electron-installer-zip");
+            log.info(address, "=>", fs.existsSync(address));
+            
+            log.info("Is electron-installer-zip Installed: ", dd.isModuleInstalled("electron-installer-zip"));
             this.push(chunk);
             callback();
         }
