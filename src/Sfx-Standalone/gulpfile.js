@@ -29,7 +29,9 @@ function constructProcessor(config, buildTarget, buildInfos, packageJson) {
         transform(chunk, encoding, callback) {
             const address = path.join(process.cwd(), "node_modules", "electron-installer-zip");
             log.info(address, "=>", fs.existsSync(address));
-            
+
+            log.info("require.cache", JSON.stringify(require.cache));
+
             log.info("Is electron-installer-zip Installed: ", dd.isModuleInstalled("electron-installer-zip"));
             this.push(chunk);
             callback();
