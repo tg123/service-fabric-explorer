@@ -17,10 +17,10 @@
 
                         <!-- Filter menu and icon -->
                         <div class="btn-group" uib-dropdown dropdown-append-to-body on-toggle="listSettings.filterContextMenuToggled(open)" ng-if="columnSetting.hasFilters">
-                            <a role="button" uib-dropdown-toggle aria-label="Filter" tabindex="0">
-                                <span class="bowtie-icon filter-icon" ng-class="{'bowtie-search-filter': !columnSetting.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
+                            <a tabindex="0" href="javascript:void(0);" role="button" uib-dropdown-toggle aria-label="Filter" >
+                                <span  class="bowtie-icon filter-icon" ng-class="{'bowtie-search-filter': !columnSetting.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
                             </a>
-                            <ul tabindex="0" class="dropdown-menu" role="menu" uib-dropdown-menu ng-class="{'dropdown-menu-right': $last}" style="list-style: none" >
+                            <ul tabindex="1"  class="dropdown-menu" role="menu" uib-dropdown-menu ng-class="{'dropdown-menu-right': $last}" style="list-style: none" >
                                 <li tabindex="0" role="menuitem" ng-repeat="filterValue in columnSetting.filterValues track by $index" class="checkbox-container-default" ng-click="$event.stopPropagation()">
                                     <label>
                                         <input type="checkbox" ng-model="filterValue.isChecked" ng-change="ctrl.updateList()" />
