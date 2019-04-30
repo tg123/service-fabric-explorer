@@ -65,17 +65,17 @@
                             aria-label="Change how often content is updated" role="slider" aria-valuenow="{{refreshCtrl.refreshRate}}" aria-valuemax="{{refreshCtrl.max}}" aria-valuemin="{{refreshCtrl.min}}" ></sfx-slider>
                         <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest">FAST</a>
                         <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh" ng-class="{'disabled rotate': navbarCtrl.isRefreshing}"
-                            ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh"></a>
+                            ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh" title="refresh"></a>
                     </div>
 
                     <div class="settings-control dropdown">
                         <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-settings-gear" role="button" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="true" aria-label="settings"></a>
+                            aria-haspopup="true" aria-expanded="true" aria-label="settings" title="settings"></a>
                         <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
                         <ul class="dropdown-menu dropdown-menu-right" style="list-style: none" ng-controller="SettingsController as settingsCtrl">
                             <li ng-controller="ThemeController as themeCtrl">
                                 <div class="settings-item-title">Choose a theme</div>
-                                <div class="choose-theme-container">
+                                <div class="choose-theme-container" role="menu">
                                     <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'dark'}" ng-click="themeCtrl.changeToTheme('dark'); $event.stopPropagation()"
                                         title="Use the dark theme" src="images/dark-theme.png" role="menuitemradio" />
                                     <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'light'}" ng-click="themeCtrl.changeToTheme('light'); $event.stopPropagation()"

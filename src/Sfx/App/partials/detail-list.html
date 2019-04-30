@@ -17,11 +17,11 @@
 
                         <!-- Filter menu and icon -->
                         <div class="btn-group" uib-dropdown dropdown-append-to-body on-toggle="listSettings.filterContextMenuToggled(open)" ng-if="columnSetting.hasFilters">
-                            <a role="button" uib-dropdown-toggle aria-label="Filter">
-                                <span class="bowtie-icon filter-icon" ng-class="{'bowtie-search-filter': !columnSetting.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
+                            <a tabindex="0" href="javascript:void(0);" role="button" uib-dropdown-toggle aria-label="Filter" >
+                                <span  class="bowtie-icon filter-icon" ng-class="{'bowtie-search-filter': !columnSetting.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
                             </a>
-                            <ul class="dropdown-menu" role="menu" uib-dropdown-menu ng-class="{'dropdown-menu-right': $last}" style="list-style: none">
-                                <li role="menuitem" ng-repeat="filterValue in columnSetting.filterValues track by $index" class="checkbox-container-default" ng-click="$event.stopPropagation()">
+                            <ul tabindex="1"  class="dropdown-menu" role="menu" uib-dropdown-menu ng-class="{'dropdown-menu-right': $last}" style="list-style: none" >
+                                <li tabindex="0" role="menuitem" ng-repeat="filterValue in columnSetting.filterValues track by $index" class="checkbox-container-default" ng-click="$event.stopPropagation()">
                                     <label>
                                         <input type="checkbox" ng-model="filterValue.isChecked" ng-change="ctrl.updateList()" />
                                         {{filterValue.value}}
@@ -33,7 +33,8 @@
                         <!-- Sort direction icon -->
                         <!-- Use transparent color to hide the icon instead of using ng-show to avoid the table layout changes when the icon showed up -->
                         <span class="bowtie-icon sort-icon" ng-if="::columnSetting.sortable" ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()"
-                              ng-class="{'transparent-icon': !listSettings.isSortedByColumn(columnSetting), 'bowtie-triangle-up': !listSettings.sortReverse, 'bowtie-triangle-down': listSettings.sortReverse}" aria-label="Sort">
+                              ng-class="{'transparent-icon': !listSettings.isSortedByColumn(columnSetting), 'bowtie-triangle-up': !listSettings.sortReverse, 'bowtie-triangle-down': listSettings.sortReverse}" aria-label="Sort"
+                              tabindex="{{listSettings.isSortedByColumn(columnSetting) ? 0 : -1}}">
                         </span>
                     </th>
                 </tr>
