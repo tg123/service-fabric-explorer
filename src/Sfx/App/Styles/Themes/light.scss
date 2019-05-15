@@ -65,6 +65,8 @@ $pagination-hover-bg: $table-border-color;
 $btn-default-color: #2D3239;
 $btn-default-bg: #EBEBEB;
 $btn-default-border: #EBEBEB;
+$state-info-text: #013c4a !default;
+$text-muted: #656464;
 
 @import "../Base/_config.scss";
 @import "../app";

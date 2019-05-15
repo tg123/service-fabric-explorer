@@ -8,10 +8,11 @@
             <thead>
                 <tr>
                 <th class="sort-filter-th" ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath"
-                    ng-style="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}">
+                    ng-style="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}" 
+                    aria-sort="{{listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'Ascending' : 'Descending' : 'None'}}">
                     <!-- Header label -->
                     <span ng-class="::{'active': columnSetting.sortable, 'shift-expander-col': $index === 0 && listSettings.secondRowCollapsible}"
-                          ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()">
+                          ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()" aria-label="Sort by {{::columnSetting.displayName}}">
                             {{::columnSetting.displayName}}
                         </span>
 
