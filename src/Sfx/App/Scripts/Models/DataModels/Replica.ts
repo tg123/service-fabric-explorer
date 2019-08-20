@@ -38,6 +38,9 @@ module Sfx {
         }
 
         public restartReplica(): angular.IPromise<any> {
+            if(this.isStatelessService){
+                return this.data.restClient.deleteReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
+            }
             return this.data.restClient.restartReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
         }
 
