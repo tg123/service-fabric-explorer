@@ -55,7 +55,7 @@
 
         <div class="detail-pane" ng-if="appsDashboard && nodesDashboard">
             <h4>
-                Dashboard2
+                Dashboard
             </h4>
             <div class="dashboard-container container-fluid">
                 <sfx-dashboard data="nodesDashboard"></sfx-dashboard>
@@ -84,7 +84,12 @@
             </div>
         </div>
 
-        <div sfx-ring-view nodes="nodes" ng-if="nodes.isInitialized" style="display: inline">
+        <div class="detail-pane">
+            <h4>
+                Ring
+            </h4>
+            <div sfx-ring-view nodes="nodes" ng-if="nodes.isInitialized">
+            </div>
         </div>
 
         <div class="detail-pane">
