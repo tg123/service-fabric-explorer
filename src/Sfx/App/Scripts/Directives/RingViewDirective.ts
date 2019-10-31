@@ -22,12 +22,17 @@ module Sfx {
 
       $scope.nodesData = [];
       $scope.statesData = [];
-      // $scope.nodes.collection.forEach((n) => {
-      //   $scope.nodesData.push(n.raw);
-      //   $scope.statesData.push({nodeId: n.raw.Id.Id});
-      // });
+      $scope.candidateIps = [];
+      $scope.nodes.collection.forEach((n) => {
+        $scope.candidateIps.push(n.raw.IpAddressOrFQDN);
+        // $scope.statesData.push({nodeId: n.raw.Id.Id});
+      });
+
+
       // $scope.myDataset = [100, 200, 300, 400, 500];
       
+      console.log($scope.nodesData);
+
       var ws:WebSocket;
 
 
@@ -44,7 +49,7 @@ module Sfx {
           console.log(error)
           recreateWs();
         };
-        
+
         ws.onmessage = function (message) {
           var json;
           try {
@@ -55,33 +60,31 @@ module Sfx {
           }
           $scope.messageHandler(json);
         };
+
+        ws.onopen = function(){
+          $scope.candidateIps.forEach((ip) => {
+            $scope.sendQuery(ip);
+          })
+        };
       }
 
       recreateWs();
 
-      // if (true) {
-      //     // ws = new WebSocket('ws://127.0.0.1:10546');
-      //     // ws = new WebSocket('ws://10.31.62.28/debug');
-          
+      $scope.sendQuery = function(IpAddressOrFQDN: string){
+        ws.send(JSON.stringify(
+          {
+            "type": "command",
+            "command": "sub",
+            // "command_guid": "bf5ca388-4294-4136-9f98-d2c38b317309",
+            //"dst_node": "node5", 
+            "data": {
+              "ip": IpAddressOrFQDN,
+             }
+          }
+        ))
+      }
 
-      //     // ws.onopen = function () {
-      //     //   var port = 10546;
-      //     //   $scope.nodes.collection.forEach((n) => {
-      //     //     //console.log(n.raw.IpAddressOrFQDN);
-      //     //     ws.send(JSON.stringify({address: "172.17.27.113:" + (port++), messageType: "init"}));
 
-      //     //   });
-      //     // };
-      // }
-      // else {
-      //     var ws = new WebSocket('ws://' + window.location.hostname + ':' + 22980);
-      //     ws.onopen = function () {
-      //       var port = 22980;
-      //       $scope.nodes.collection.forEach((n) => {
-      //         ws.send(JSON.stringify({address: "127.0.0.1:" + (port++), messageType: "init"}));
-      //       });
-      //     };
-      // }
 
 
 
