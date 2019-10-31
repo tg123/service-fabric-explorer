@@ -2,15 +2,21 @@
 
 
 <div style="display: inline">
+    <div style="display:block">
+        <button type="button" style="background-color: #262626;border: 1px solid #0075c9;" class="checkbox-push">
+            Connect with IP
+        </button>
+    </div>
     <div class="dashboard-datapoints" ng-repeat="n in statesData" style="display: inline-block; width: 250px; height: 250px; background: #262626; margin: 10px; padding: 10px;">
-        <div style="">{{n.nodeId}}</div>
+        <div style="">{{n.node_id}}</div>
 
-        <div style="">{{n.instanceId}}</div>
+        <div style="">{{n.instance_Id}}</div>
         <div style="">{{n.phase}}</div>
         <div style="">{{n.joinPhase}}</div>
-        <div style="">{{n.routingTokenBegin}}</div>
-        <div style="">{{n.routingTokenEnd}}</div>
-        <div style="">{{n.routingTokenVersion}}</div>
+        <div style="">{{n.routing_token_start}}</div>
+        <div style="">{{n.routing_token_end}}</div>
+        <div style="">{{n.routing_token_version}}</div>
     </div>
-    {{statesData}}
+
+    <!-- {{statesData}} -->
 </div>
