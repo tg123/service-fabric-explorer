@@ -85,24 +85,88 @@ module Sfx {
       }
 
 
+      let cy = cytoscape({
+        container: document.getElementById('cytoscape-canvas'),
+        zoomingEnabled: false,
+        userZoomingEnabled: false,
+        autoungrabify: false,
+        style: [{
+          "selector": "node",
+          "style": {
+              "content": "data(label)",
+              "font-size": "12px",
+              "text-valign": "center",
+              "text-halign": "center",
+              "background-color": "#7FBA00",
+              "text-outline-color": "#555",
+              "text-outline-width": "2px",
+              "color": "#fff",
+              "overlay-padding": "6px",
+              "z-index": "10"
+          }
+       }],
+      });
 
 
+      $scope.buildLabel = function(node: any){
+        return node.node_name + " (" + node.phase + ")"
+      }
 
       $scope.messageHandler = function (node: any) {
-        console.log(node)
-        $scope.preprocess(node);
-        var index = _.findIndex($scope.statesData, function (o: any) { return o.node_id == node.node_id; })
-        if (index >= 0) {
-          $scope.statesData[index] = node;
-        }
-        else {
-          var insertIndex = _.sortedIndexBy($scope.statesData, node, function (o: any) { return o.node_id; });
-          $scope.statesData.splice(insertIndex, 0, node);
 
-          //$scope.statesData.push(node);
-          //_.sortedIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
+        let id = "sfnode_" + node.node_id
+        let n = cy.nodes("#" + id)
+
+        if (!n.id()) {
+          cy.add({
+            group: 'nodes',
+              data: { 
+                "id": id,
+                "label": $scope.buildLabel(node),
+                "origin": node,
+              },
+            })
+        } else {
+            n.data("label", $scope.buildLabel(node))
+            n.data("origin", node)
         }
-        _.defer(function(){$scope.$apply(); });
+
+        node.neighborhood.forEach(neighbor => {
+          let dstid = "sfnode_" + neighbor.node_id
+
+          if (dstid == id) {
+            return
+          }
+
+          cy.edges('[source = "' + id + '"]').remove()
+
+          try {
+            cy.add({
+              group: 'edges',
+              data: { source: id, target: dstid},
+            });
+          }catch(e){}
+        })
+
+        var layout = cy.layout({'name': 'circle'});
+        layout.run();
+
+        // console.log(node)
+        // $scope.preprocess(node);
+        // var index = _.findIndex($scope.statesData, function (o: any) { return o.node_id == node.node_id; })
+        // if (index >= 0) {
+        //   $scope.statesData[index] = node;
+        // }
+        // else {
+        //   var insertIndex = _.sortedIndexBy($scope.statesData, node, function (o: any) { return o.node_id; });
+        //   $scope.statesData.splice(insertIndex, 0, node);
+
+        //   //$scope.statesData.push(node);
+        //   //_.sortedIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
+        // }
+        // _.defer(function(){$scope.$apply(); });
+
+
       }
 
       $scope.preprocess = function (node: any) {
