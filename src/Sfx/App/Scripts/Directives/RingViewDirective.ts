@@ -8,46 +8,50 @@ module Sfx {
     public templateUrl = "partials/ring-view.html";
     public scope = {
         nodes: "=",
+        clusterManifest: "=",
     };
-
-    
-
-    // constructor(){
-    //   'ngInject';
-    //   console.log($scope);
-    // }
-
 
     public link($scope: any, element: JQuery, attributes: any, ctrl: DetailViewPartController) {
 
-      $scope.nodesData = [];
-      $scope.statesData = [];
-      $scope.candidateIps = [];
-      $scope.nodes.collection.forEach((n) => {
-        $scope.candidateIps.push(n.raw.IpAddressOrFQDN);
-        // $scope.statesData.push({nodeId: n.raw.Id.Id});
-      });
-
-
-      // $scope.myDataset = [100, 200, 300, 400, 500];
-      
-      console.log($scope.nodesData);
-
-      var ws:WebSocket;
-
+      let ws:WebSocket;
+      let recreateTimer;
 
       let recreateWs = function() {
+
+        let tmap = {}
+
+        let m = $($scope.clusterManifest.raw.Manifest);
+        m.find("NotificationEndpoint").each((idx, endpoint) => {
+          let type = $(endpoint).parent().parent().attr("Name");
+          let port = $(endpoint).attr("Port");
+          tmap[type]  = port;
+        });
+
+        let candidateEndpoints = [];
+
+        m.find("Node").each((idx, n) => {
+          candidateEndpoints.push($(n).attr("IPAddressOrFQDN") + ":" + tmap[$(n).attr("NodeTypeRef")]);
+        })
+
+        // console.log(candidateEndpoints);
+
         // TODO load from config
-        ws = new WebSocket('ws://127.0.0.1:10286/debug');
+        ws = new WebSocket("ws://" + candidateEndpoints[0]);
   
-        ws.onclose = function (event) {
-          console.log(event)
-          recreateWs();
-        };
+        // ws.onclose = function (event) {
+        //   console.log(event)
+        //   if (recreateTimer){
+        //     clearTimeout(recreateTimer);
+        //   }
+        //   recreateTimer = setTimeout(recreateWs, 1000);
+        // };
   
         ws.onerror = function (error) {
           console.log(error)
-          recreateWs();
+          if (recreateTimer){
+            clearTimeout(recreateTimer);
+          }
+          recreateTimer = setTimeout(recreateWs, 1000);
         };
 
         ws.onmessage = function (message) {
@@ -62,13 +66,15 @@ module Sfx {
         };
 
         ws.onopen = function(){
-          $scope.candidateIps.forEach((ip) => {
+          $scope.candidateEndpoints.forEach((ip) => {
             $scope.sendQuery(ip);
           })
         };
       }
 
-      recreateWs();
+      $scope.clusterManifest.ensureInitialized().then( data => {
+        recreateWs();
+      })
 
       $scope.sendQuery = function(IpAddressOrFQDN: string){
         ws.send(JSON.stringify(
@@ -109,13 +115,13 @@ module Sfx {
 
 
       $scope.buildLabel = function(node: any){
-        return node.node_name + " (" + node.phase + ")"
+        return node.node_name + " (" + node.phase + ")";
       }
 
       $scope.messageHandler = function (node: any) {
 
-        let id = "sfnode_" + node.node_id
-        let n = cy.nodes("#" + id)
+        let id = "sfnode_" + node.node_id;
+        let n = cy.nodes("#" + id);
 
         if (!n.id()) {
           cy.add({
@@ -125,27 +131,28 @@ module Sfx {
                 "label": $scope.buildLabel(node),
                 "origin": node,
               },
-            })
+            });
         } else {
-            n.data("label", $scope.buildLabel(node))
-            n.data("origin", node)
+            n.data("label", $scope.buildLabel(node));
+            n.data("origin", node);
         }
 
         node.neighborhood.forEach(neighbor => {
-          let dstid = "sfnode_" + neighbor.node_id
+          let dstid = "sfnode_" + neighbor.node_id;
 
-          if (dstid == id) {
-            return
+          if (dstid === id) {
+            return;
           }
 
-          cy.edges('[source = "' + id + '"]').remove()
+          cy.edges('[source = "' + id + '"]').remove();
 
           try {
             cy.add({
               group: 'edges',
               data: { source: id, target: dstid},
             });
-          }catch(e){}
+          }catch(e){
+          }
         })
 
         var layout = cy.layout({'name': 'circle'});

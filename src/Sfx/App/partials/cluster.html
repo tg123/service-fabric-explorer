@@ -88,7 +88,11 @@
             <h4>
                 Ring
             </h4>
-            <div sfx-ring-view nodes="nodes" ng-if="nodes.isInitialized">
+            <div>
+           {{systemApp.healthState.text}}
+            </div>
+            <div sfx-ring-view nodes="nodes" cluster-manifest="clusterManifest" ng-if="nodes.isInitialized">
+            <!-- <div sfx-ring-view ng-if="nodes.isInitialized"> -->
             </div>
         </div>
 
