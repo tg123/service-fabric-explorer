@@ -66,7 +66,7 @@ module Sfx {
         };
 
         ws.onopen = function(){
-          $scope.candidateEndpoints.forEach((ip) => {
+          candidateEndpoints.forEach((ip) => {
             $scope.sendQuery(ip);
           })
         };
@@ -78,14 +78,16 @@ module Sfx {
 
       $scope.sendQuery = function(IpAddressOrFQDN: string){
         ws.send(JSON.stringify(
+          // {
+          //   "type": "command",
+          //   "command": "sub",
+          //   "data": {
+          //     "ip": IpAddressOrFQDN,
+          //    }
+          // }
           {
-            "type": "command",
-            "command": "sub",
-            // "command_guid": "bf5ca388-4294-4136-9f98-d2c38b317309",
-            //"dst_node": "node5", 
-            "data": {
-              "ip": IpAddressOrFQDN,
-             }
+            "message_type": "query",
+            "address": IpAddressOrFQDN,
           }
         ))
       }
