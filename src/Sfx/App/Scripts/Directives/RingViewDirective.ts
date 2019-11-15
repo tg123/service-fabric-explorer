@@ -15,6 +15,7 @@ module Sfx {
 
       let ws:WebSocket;
       let recreateTimer;
+      $scope.ipaddr = "";
 
       let recreateWs = function() {
 
@@ -37,6 +38,7 @@ module Sfx {
 
         // TODO load from config
         ws = new WebSocket("ws://" + candidateEndpoints[0]);
+        // ws = new WebSocket("ws://127.0.0.1:10286");
   
         // ws.onclose = function (event) {
         //   console.log(event)
@@ -76,22 +78,23 @@ module Sfx {
         recreateWs();
       })
 
-      $scope.sendQuery = function(IpAddressOrFQDN: string){
+      $scope.sendQuery = function(endpint: string){
+        if(ws.readyState !== WebSocket.OPEN){
+          return;
+        }
+
         ws.send(JSON.stringify(
-          // {
-          //   "type": "command",
-          //   "command": "sub",
-          //   "data": {
-          //     "ip": IpAddressOrFQDN,
-          //    }
-          // }
           {
             "message_type": "query",
-            "address": IpAddressOrFQDN,
+            "address": endpint,
           }
         ))
       }
 
+      $scope.addNode = function(){
+        $scope.sendQuery($scope.ipaddr);
+        $scope.ipaddr = "";
+      }
 
       let cy = cytoscape({
         container: document.getElementById('cytoscape-canvas'),
@@ -117,7 +120,8 @@ module Sfx {
 
 
       $scope.buildLabel = function(node: any){
-        return node.node_name + " (" + node.phase + ")";
+        // return node.node_name + " (" + node.phase + ")";
+        return node.node_id.substring(0, 5) + " (" + node.phase + ")";
       }
 
       $scope.messageHandler = function (node: any) {
@@ -126,7 +130,7 @@ module Sfx {
         let n = cy.nodes("#" + id);
 
         if (!n.id()) {
-          cy.add({
+          n = cy.add({
             group: 'nodes',
               data: { 
                 "id": id,
@@ -134,19 +138,24 @@ module Sfx {
                 "origin": node,
               },
             });
+
+            n.on("click", () => {
+              alert(n.data("label"));
+            });
+
         } else {
             n.data("label", $scope.buildLabel(node));
             n.data("origin", node);
         }
 
+        cy.edges('[source = "' + id + '"]').remove();
+
+
         node.neighborhood.forEach(neighbor => {
           let dstid = "sfnode_" + neighbor.node_id;
-
           if (dstid === id) {
             return;
           }
-
-          cy.edges('[source = "' + id + '"]').remove();
 
           try {
             cy.add({
@@ -159,23 +168,6 @@ module Sfx {
 
         var layout = cy.layout({'name': 'circle'});
         layout.run();
-
-        // console.log(node)
-        // $scope.preprocess(node);
-        // var index = _.findIndex($scope.statesData, function (o: any) { return o.node_id == node.node_id; })
-        // if (index >= 0) {
-        //   $scope.statesData[index] = node;
-        // }
-        // else {
-        //   var insertIndex = _.sortedIndexBy($scope.statesData, node, function (o: any) { return o.node_id; });
-        //   $scope.statesData.splice(insertIndex, 0, node);
-
-        //   //$scope.statesData.push(node);
-        //   //_.sortedIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
-        // }
-        // _.defer(function(){$scope.$apply(); });
-
-
       }
 
       $scope.preprocess = function (node: any) {
