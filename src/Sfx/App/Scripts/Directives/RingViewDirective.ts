@@ -1,7 +1,7 @@
-
-
-
 module Sfx {
+
+  
+
   export class RingViewDirective implements ng.IDirective {
     public restrict = "AE";
     public replace = true;
@@ -12,11 +12,31 @@ module Sfx {
     };
 
     public link($scope: any, element: JQuery, attributes: any, ctrl: DetailViewPartController) {
+      let makeTippy = function(node, html){
+        return tippy( node.popperRef(), {
+          html: html,
+          trigger: 'manual',
+          arrow: true,
+          placement: 'bottom',
+          hideOnClick: false,
+          interactive: true
+        } ).tooltips[0];
+      };
+
+      let hideTippy = function(node){
+        let tippy = node.data('tippy');
+  
+        if(tippy != null){
+          tippy.hide();
+        }
+      };
 
       let ws:WebSocket;
       let recreateTimer;
       $scope.ipaddr = "";
 
+
+  
       let recreateWs = function() {
 
         let tmap = {}
@@ -57,7 +77,7 @@ module Sfx {
         };
 
         ws.onmessage = function (message) {
-          var json;
+          let json;
           try {
             json = JSON.parse(message.data);
           } catch (e) {
@@ -118,6 +138,27 @@ module Sfx {
        }],
       });
 
+      let hideAllTippies = function(){
+        cy.nodes().forEach(hideTippy);
+      };
+
+      cy.on('tap', function(e){
+        if(e.target === cy){
+          hideAllTippies();
+        }
+      });
+  
+      cy.on('tap', 'edge', function(e){
+        hideAllTippies();
+      });
+  
+      cy.on('zoom pan', function(e){
+        hideAllTippies();
+      });   
+
+      $(".main-view").scroll(function(e){
+        hideAllTippies();
+      });
 
       $scope.buildLabel = function(node: any){
         // return node.node_name + " (" + node.phase + ")";
@@ -139,8 +180,28 @@ module Sfx {
               },
             });
 
+            let el = document.createElement('div')
+            let tippy = makeTippy(n, el);
+
+            n.data('tippy', tippy);
+            n.data('el', el);
+
+
             n.on("click", () => {
-              alert(n.data("label"));
+              let origin = n.data('origin');
+
+              // console.log(origin);
+              let ul = $("<div>")
+              ul.css("text-align", "left");
+              ul.append($("<p>").text("Phase:" + origin.phase));
+              ul.append($("<p>").text("Join Phase:" + origin.join_phase));
+              ul.append($("<p>").text("Node Id:" + origin.node_id));
+              ul.append($("<p>").text("Token Start:" + origin.routing_token_start));
+              ul.append($("<p>").text("Token End:" + origin.routing_token_end));
+              ul.append($("<p>").text("Token Version:" + origin.routing_token_version));
+
+              $(el).replaceWith(ul);
+              tippy.show();
             });
 
         } else {
@@ -166,7 +227,7 @@ module Sfx {
           }
         })
 
-        var layout = cy.layout({'name': 'circle'});
+        let layout = cy.layout({'name': 'circle'});
         layout.run();
       }
 
